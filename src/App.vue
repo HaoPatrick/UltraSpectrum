@@ -15,14 +15,23 @@
       <SpecGraph v-if="selectComputed.name!==''" :id="'computed'" :spec='selectComputed'></SpecGraph>
     </div>
     <div v-if="scaledXYZ !== NaN">
-      <el-slider @change="computeRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/2" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
-      <p>
-        computed: x {{scaledXYZ.x}} y {{scaledXYZ.y}} z {{scaledXYZ.z}}
-      </p>
-      <p>
-        computed: r {{computedRGB.r}} g {{computedRGB.g}} b {{computedRGB.b}}
-      </p>
-      <div :style="`backgroundColor:rgb(${computedRGB.r*255},${computedRGB.g*255},${computedRGB.b*255})`" style="width:2em;height:2em; background-color:#eee;" id="color-block"></div>
+      <el-slider @change="computeRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/5" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
+      <div style="display:flex;justify-content:center;">
+        <div>
+          <p>
+            xyz: ({{scaledXYZ.x|round3}}, {{scaledXYZ.y|round3}}, {{scaledXYZ.z|round3}})
+          </p>
+          <p>
+            rgb: ({{computedRGB.r|round3}}, {{computedRGB.g|round3}}, {{computedRGB.b|round3}})
+          </p>
+          <p>
+            rgb: ({{computedRGB.r*255|round}}, {{computedRGB.g*255|round}}, {{computedRGB.b*255|round}})
+          </p>
+        </div>
+        <div>
+          <div :style="`backgroundColor:rgb(${computedRGB.r*255},${computedRGB.g*255},${computedRGB.b*255})`" style="margin-left:1em;width:4em;height:4em;"></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -32,10 +41,18 @@ import { Component, Vue } from "vue-property-decorator";
 import SpecGraph from "./components/SpecGraph.vue";
 import { arrayMulti, SpecValue, Ixyz, Irgb } from "./util";
 import { Breadcrumb } from "element-ui";
-
+import * as utilLib from "./util";
 @Component({
   components: {
     SpecGraph
+  },
+  filters: {
+    round3(val: number) {
+      return Math.round(val * 1000) / 1000;
+    },
+    round(val: number) {
+      return Math.round(val);
+    }
   }
 })
 export default class App extends Vue {
@@ -61,6 +78,7 @@ export default class App extends Vue {
   private rawXYZ: Ixyz = { x: 0, y: 0, z: 0 };
   private scaledXYZ: Ixyz = { x: 0, y: 0, z: 0 };
   private xyzScaleRatio: number = 1;
+  private util = utilLib;
 
   public updateChange() {
     const computedData = arrayMulti(
@@ -93,6 +111,7 @@ export default class App extends Vue {
       y: ySum,
       z: zSum
     };
+    this.xyzScaleRatio = xSum + ySum + zSum;
     this.computeRGB();
   }
   public computeRGB() {
@@ -130,11 +149,16 @@ export default class App extends Vue {
 .graph-column {
   display: flex;
 }
+p {
+  margin-top: 0.4em;
+}
 </style>
 
 <style>
 #app {
   /* font-family: "Avenir", Helvetica, Arial, sans-serif; */
+  font-family: "游ゴシック", YuGothic, "ヒラギノ角ゴ Pro",
+    "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
