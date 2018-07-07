@@ -19,7 +19,7 @@ cache:
   - node_modules
 
 before_deploy:
-- echo ultraspetrum.haoxp.xyz > dist/CNAME
+- echo ultraspectrum.haoxp.xyz > dist/CNAME
 
 deploy:
   provider: pages
