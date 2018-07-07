@@ -8,7 +8,7 @@ export interface SpecValue {
     data: number[];
 }
 
-export function specMulti(data1: number[], data2: number[]) {
+export function arrayMulti(data1: number[], data2: number[]) {
     const multipled = data1.map((_, i) => {
         return data1[i] * data2[i];
     });
