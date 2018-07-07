@@ -1,17 +1,18 @@
 <template>
   <div id="app">
     <div>
-      <el-select v-model="selectedLight">
-        <el-option v-for="item in lights" :key="item.name" :label="item.name" :value="item">
+      <el-select @change="updateChange" placeholder="Select" v-model="selectedLight">
+        <el-option v-for="(item,index) in lights" :key="item.name" :label="item.name" :value="index">
         </el-option>
       </el-select>
-      <el-select v-model="selectedReflectance">
-        <el-option v-for="item in reflectance" :key="item.name" :label="item.name" :value="item"></el-option>
+      <el-select @change="updateChange" placeholder="Select" v-model="selectedReflectance">
+        <el-option v-for="(item,index) in reflectance" :key="item.name" :label="item.name" :value="index"></el-option>
       </el-select>
     </div>
-    <div>
-      <SpecGraph v-if="selectedLight.name!==''" ref="lightGraph" :id="'light'" :spec='selectedLight'></SpecGraph>
-      <SpecGraph v-if="selectedReflectance.name!==''" ref="refleComponent" :id="'reflectance'" :spec='selectedReflectance'></SpecGraph>
+    <div class="graph-column">
+      <SpecGraph v-if="selectedLight.name!==''" :id="'light'" :spec='lights[selectedLight]'></SpecGraph>
+      <SpecGraph v-if="selectedReflectance.name!==''" :id="'reflectance'" :spec='reflectance[selectedReflectance]'></SpecGraph>
+      <SpecGraph v-if="selectComputed.name!==''" :id="'computed'" :spec='selectComputed'></SpecGraph>
     </div>
   </div>
 </template>
@@ -19,6 +20,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import SpecGraph from "./components/SpecGraph.vue";
+import { specMulti, SpecValue } from "./util";
 
 @Component({
   components: {
@@ -26,27 +28,48 @@ import SpecGraph from "./components/SpecGraph.vue";
   }
 })
 export default class App extends Vue {
-  lights = [
+  lights: SpecValue[] = [
     require("./assets/spec_lights/d50.json"),
     require("./assets/spec_lights/illA.json")
   ];
-  reflectance = [
+  reflectance: SpecValue[] = [
     require("./assets/spec_reflectance/black_dry_leaf.json"),
     require("./assets/spec_reflectance/green_leaf.json"),
     require("./assets/spec_reflectance/red_flower.json"),
     require("./assets/spec_reflectance/yellow_flower.json")
   ];
 
-  selectedLight: object = this.lights[0];
-  selectedReflectance: object = this.reflectance[0];
-  mounted() {}
+  mounted() {
+    this.updateChange();
+  }
+  selectedLight: number = 0;
+  selectedReflectance: number = 0;
+  selectComputed: SpecValue = {} as SpecValue;
 
-  $refs!: {
-    spcComponent: SpecGraph;
-    refleComponent: SpecGraph;
-  };
+  updateChange() {
+    const computedData = specMulti(
+      this.lights[this.selectedLight].data,
+      this.reflectance[this.selectedReflectance].data
+    );
+    const example = this.lights[this.selectedLight];
+    const result: SpecValue = {
+      name: "computed",
+      type: "computed",
+      type_max: example.type_max * this.selectComputed.type_max,
+      start_nm: example.start_nm,
+      end_nm: example.end_nm,
+      resolution: example.resolution,
+      data: computedData
+    };
+    this.selectComputed = result;
+  }
 }
 </script>
+<style scoped>
+.graph-column {
+  display: flex;
+}
+</style>
 
 <style>
 #app {
