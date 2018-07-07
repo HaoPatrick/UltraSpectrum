@@ -31,13 +31,14 @@ export default class SpecGraph extends Vue {
         text: newSpec.name
       },
       tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "cross"
-        }
+        trigger: "axis"
+      },
+      legend: {
+        data: ["value"]
       },
       xAxis: {
         type: "category",
+        name: "nm",
         data: range(newSpec.start_nm, newSpec.end_nm, newSpec.resolution)
       },
       yAxis: {
@@ -46,7 +47,8 @@ export default class SpecGraph extends Vue {
       series: [
         {
           type: "line",
-          data: newSpec.data
+          data: newSpec.data,
+          showSymbol: false
         }
       ]
     };

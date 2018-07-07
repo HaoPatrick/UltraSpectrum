@@ -1,10 +1,12 @@
 <template>
   <div id="app">
     <div>
+      <span>Light: </span>
       <el-select @change="updateChange" placeholder="Select" v-model="selectedLight">
         <el-option v-for="(item,index) in lights" :key="item.name" :label="item.name" :value="index">
         </el-option>
       </el-select>
+      <span> Reflectance: </span>
       <el-select @change="updateChange" placeholder="Select" v-model="selectedReflectance">
         <el-option v-for="(item,index) in reflectance" :key="item.name" :label="item.name" :value="index"></el-option>
       </el-select>
@@ -15,16 +17,18 @@
       <SpecGraph v-if="selectComputed.name!==''" :id="'computed'" :spec='selectComputed'></SpecGraph>
     </div>
     <div v-if="scaledXYZ !== NaN">
-      <el-slider @change="computeRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/5" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
+      <div style="width:30%;margin:auto;">
+        <el-slider @change="computeRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/5" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
+      </div>
       <div style="display:flex;justify-content:center;">
         <div>
           <p>
             xyz: ({{scaledXYZ.x|round3}}, {{scaledXYZ.y|round3}}, {{scaledXYZ.z|round3}})
           </p>
-          <p>
+          <p :style="`color: ${validRGB?'inherit':'#da3f3f'};`">
             rgb: ({{computedRGB.r|round3}}, {{computedRGB.g|round3}}, {{computedRGB.b|round3}})
           </p>
-          <p>
+          <p :style="`color: ${validRGB?'inherit':'#da3f3f'};`">
             rgb: ({{computedRGB.r*255|round}}, {{computedRGB.g*255|round}}, {{computedRGB.b*255|round}})
           </p>
         </div>
@@ -79,6 +83,16 @@ export default class App extends Vue {
   private scaledXYZ: Ixyz = { x: 0, y: 0, z: 0 };
   private xyzScaleRatio: number = 1;
   private util = utilLib;
+  private get validRGB() {
+    return (
+      this.computedRGB.r > 0 &&
+      this.computedRGB.r < 1 &&
+      this.computedRGB.g > 0 &&
+      this.computedRGB.g < 1 &&
+      this.computedRGB.b > 0 &&
+      this.computedRGB.b < 1
+    );
+  }
 
   public updateChange() {
     const computedData = arrayMulti(
@@ -151,6 +165,9 @@ export default class App extends Vue {
 }
 p {
   margin-top: 0.4em;
+}
+red-text {
+  color: #da3f3f;
 }
 </style>
 
