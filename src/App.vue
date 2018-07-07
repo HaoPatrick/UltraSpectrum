@@ -1,13 +1,17 @@
 <template>
   <div id="app">
     <div>
-      <el-select v-model="selectedSpec" placeholder='select spectrum'>
+      <el-select v-model="selectedLight">
         <el-option v-for="item in lights" :key="item.name" :label="item.name" :value="item">
         </el-option>
       </el-select>
+      <el-select v-model="selectedReflectance">
+        <el-option v-for="item in reflectance" :key="item.name" :label="item.name" :value="item"></el-option>
+      </el-select>
     </div>
     <div>
-      <SpecGraph v-if="selectedSpec.name!==''" ref="spcComponent" :spec='selectedSpec'></SpecGraph>
+      <SpecGraph v-if="selectedLight.name!==''" ref="lightGraph" :id="'light'" :spec='selectedLight'></SpecGraph>
+      <SpecGraph v-if="selectedReflectance.name!==''" ref="refleComponent" :id="'reflectance'" :spec='selectedReflectance'></SpecGraph>
     </div>
   </div>
 </template>
@@ -26,12 +30,20 @@ export default class App extends Vue {
     require("./assets/spec_lights/d50.json"),
     require("./assets/spec_lights/illA.json")
   ];
+  reflectance = [
+    require("./assets/spec_reflectance/black_dry_leaf.json"),
+    require("./assets/spec_reflectance/green_leaf.json"),
+    require("./assets/spec_reflectance/red_flower.json"),
+    require("./assets/spec_reflectance/yellow_flower.json")
+  ];
 
-  selectedSpec: object = this.lights[0];
+  selectedLight: object = this.lights[0];
+  selectedReflectance: object = this.reflectance[0];
   mounted() {}
 
   $refs!: {
     spcComponent: SpecGraph;
+    refleComponent: SpecGraph;
   };
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="echart-main" style="width:600px;height:400px;"> </div>
+    <div :id="`echart-${id}`" style="width:600px;height:400px;"> </div>
   </div>
 </template>
 
@@ -12,10 +12,11 @@ import range from "lodash/range";
 @Component
 export default class SpecGraph extends Vue {
   @Prop() private spec!: any;
+  @Prop() private id!: string;
   chart!: echarts.ECharts;
   mounted() {
     this.chart = echarts.init(document.getElementById(
-      "echart-main"
+      `echart-${this.id}`
     ) as HTMLDivElement);
     this.chart.setOption(this.generateOptions(this.spec));
   }
