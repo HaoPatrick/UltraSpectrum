@@ -8,6 +8,19 @@ export interface SpecValue {
     data: number[];
 }
 
+export interface Ixyz {
+    x: number;
+    y: number;
+    z: number;
+}
+
+export interface Irgb {
+    r: number;
+    g: number;
+    b: number;
+}
+
+
 export function arrayMulti(data1: number[], data2: number[]) {
     const multipled = data1.map((_, i) => {
         return data1[i] * data2[i];

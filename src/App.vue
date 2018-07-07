@@ -14,9 +14,10 @@
       <SpecGraph v-if="selectedReflectance.name!==''" :id="'reflectance'" :spec='reflectance[selectedReflectance]'></SpecGraph>
       <SpecGraph v-if="selectComputed.name!==''" :id="'computed'" :spec='selectComputed'></SpecGraph>
     </div>
-    <div v-if="computedXYZ !== NaN">
+    <div v-if="scaledXYZ !== NaN">
+      <el-slider @change="computeRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/2" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
       <p>
-        computed: x {{computedXYZ.x}} y {{computedXYZ.y}} z {{computedXYZ.z}}
+        computed: x {{scaledXYZ.x}} y {{scaledXYZ.y}} z {{scaledXYZ.z}}
       </p>
       <p>
         computed: r {{computedRGB.r}} g {{computedRGB.g}} b {{computedRGB.b}}
@@ -29,7 +30,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import SpecGraph from "./components/SpecGraph.vue";
-import { arrayMulti, SpecValue } from "./util";
+import { arrayMulti, SpecValue, Ixyz, Irgb } from "./util";
 import { Breadcrumb } from "element-ui";
 
 @Component({
@@ -53,8 +54,10 @@ export default class App extends Vue {
     y: require("./assets/spec_color_match/y.json"),
     z: require("./assets/spec_color_match/z.json")
   };
-  computedXYZ: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
-  computedRGB: { r: number; g: number; b: number } = { r: 0, g: 0, b: 0 };
+  computedRGB: Irgb = { r: 0, g: 0, b: 0 };
+  rawXYZ: Ixyz = { x: 0, y: 0, z: 0 };
+  scaledXYZ: Ixyz = { x: 0, y: 0, z: 0 };
+  xyzScaleRatio: number = 1;
   mounted() {
     this.updateChange();
   }
@@ -94,22 +97,25 @@ export default class App extends Vue {
     const xSum = xData.filter(item => item).reduce((a, b) => a + b);
     const ySum = yData.filter(item => item).reduce((a, b) => a + b);
     const zSum = zData.filter(item => item).reduce((a, b) => a + b);
-    this.computedXYZ = {
-      x: xSum / (xSum + ySum + zSum),
-      y: ySum / (xSum + ySum + zSum),
-      z: zSum / (xSum + ySum + zSum)
+    this.rawXYZ = {
+      x: xSum,
+      y: ySum,
+      z: zSum
     };
-    this.computedRGB = this.xyz2rgb(this.computedXYZ);
+    this.computeRGB();
   }
-  xyz2rgb(xyz: {
-    x: number;
-    y: number;
-    z: number;
-  }): { r: number; g: number; b: number } {
-    const r = 3.2406 * xyz.x - 1.5372 * xyz.y - 0.4986 * xyz.z;
-    const g = -0.9689 * xyz.x + 1.8758 * xyz.y + 0.0415 * xyz.z;
-    const b = 0.0557 * xyz.x - 0.204 * xyz.y + 1.057 * xyz.z;
-    return {
+  computeRGB() {
+    const scaled: Ixyz = {
+      x: this.rawXYZ.x / this.xyzScaleRatio,
+      y: this.rawXYZ.y / this.xyzScaleRatio,
+      z: this.rawXYZ.z / this.xyzScaleRatio
+    };
+    this.scaledXYZ = scaled;
+    const r = 3.2406 * scaled.x - 1.5372 * scaled.y - 0.4986 * scaled.z;
+    const g = -0.9689 * scaled.x + 1.8758 * scaled.y + 0.0415 * scaled.z;
+    const b = 0.0557 * scaled.x - 0.204 * scaled.y + 1.057 * scaled.z;
+
+    this.computedRGB = {
       r: this.gammaCorrection(r),
       g: this.gammaCorrection(g),
       b: this.gammaCorrection(b)
