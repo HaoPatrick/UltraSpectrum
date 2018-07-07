@@ -13,19 +13,19 @@ import range from "lodash/range";
 export default class SpecGraph extends Vue {
   @Prop() private spec!: any;
   @Prop() private id!: string;
-  chart!: echarts.ECharts;
-  mounted() {
+  private chart!: echarts.ECharts;
+  private mounted() {
     this.chart = echarts.init(document.getElementById(
       `echart-${this.id}`
     ) as HTMLDivElement);
     this.chart.setOption(this.generateOptions(this.spec));
   }
   @Watch("spec")
-  onSpecChanged(newSpec: any) {
+  private onSpecChanged(newSpec: any) {
     const option = this.generateOptions(newSpec);
     this.chart.setOption(option);
   }
-  generateOptions(newSpec: any) {
+  private generateOptions(newSpec: any) {
     const option = {
       title: {
         text: newSpec.name

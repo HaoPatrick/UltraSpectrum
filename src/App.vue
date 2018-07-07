@@ -39,33 +39,30 @@ import { Breadcrumb } from "element-ui";
   }
 })
 export default class App extends Vue {
-  lights: SpecValue[] = [
+  protected selectedLight: number = 0;
+  protected selectedReflectance: number = 0;
+  protected selectComputed: SpecValue = {} as SpecValue;
+  private lights: SpecValue[] = [
     require("./assets/spec_lights/d50.json"),
     require("./assets/spec_lights/illA.json")
   ];
-  reflectance: SpecValue[] = [
+  private reflectance: SpecValue[] = [
     require("./assets/spec_reflectance/black_dry_leaf.json"),
     require("./assets/spec_reflectance/green_leaf.json"),
     require("./assets/spec_reflectance/red_flower.json"),
     require("./assets/spec_reflectance/yellow_flower.json")
   ];
-  colorMatch: { x: SpecValue; y: SpecValue; z: SpecValue } = {
+  private colorMatch: { x: SpecValue; y: SpecValue; z: SpecValue } = {
     x: require("./assets/spec_color_match/x.json"),
     y: require("./assets/spec_color_match/y.json"),
     z: require("./assets/spec_color_match/z.json")
   };
-  computedRGB: Irgb = { r: 0, g: 0, b: 0 };
-  rawXYZ: Ixyz = { x: 0, y: 0, z: 0 };
-  scaledXYZ: Ixyz = { x: 0, y: 0, z: 0 };
-  xyzScaleRatio: number = 1;
-  mounted() {
-    this.updateChange();
-  }
-  selectedLight: number = 0;
-  selectedReflectance: number = 0;
-  selectComputed: SpecValue = {} as SpecValue;
+  private computedRGB: Irgb = { r: 0, g: 0, b: 0 };
+  private rawXYZ: Ixyz = { x: 0, y: 0, z: 0 };
+  private scaledXYZ: Ixyz = { x: 0, y: 0, z: 0 };
+  private xyzScaleRatio: number = 1;
 
-  updateChange() {
+  public updateChange() {
     const computedData = arrayMulti(
       this.lights[this.selectedLight].data,
       this.reflectance[this.selectedReflectance].data
@@ -83,14 +80,8 @@ export default class App extends Vue {
     this.selectComputed = result;
     this.colorMatching(result);
   }
-  accumulator(x: number, y: number) {
-    if (x !== NaN && y !== NaN) {
-      return x + y;
-    } else {
-      return x;
-    }
-  }
-  colorMatching(spec: SpecValue) {
+
+  public colorMatching(spec: SpecValue) {
     const xData = arrayMulti(spec.data, this.colorMatch.x.data);
     const yData = arrayMulti(spec.data, this.colorMatch.y.data);
     const zData = arrayMulti(spec.data, this.colorMatch.z.data);
@@ -104,7 +95,7 @@ export default class App extends Vue {
     };
     this.computeRGB();
   }
-  computeRGB() {
+  public computeRGB() {
     const scaled: Ixyz = {
       x: this.rawXYZ.x / this.xyzScaleRatio,
       y: this.rawXYZ.y / this.xyzScaleRatio,
@@ -121,7 +112,12 @@ export default class App extends Vue {
       b: this.gammaCorrection(b)
     };
   }
-  gammaCorrection(v: number): number {
+
+  private mounted() {
+    this.updateChange();
+  }
+
+  private gammaCorrection(v: number): number {
     if (v <= 0.0031308) {
       return 12.92 * v;
     } else {
