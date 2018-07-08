@@ -46,6 +46,7 @@ import SpecGraph from "./components/SpecGraph.vue";
 import { arrayMulti, SpecValue, Ixyz, Irgb } from "./util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "./util";
+import * as colorData from "./util/colorData";
 @Component({
   components: {
     SpecGraph
@@ -63,21 +64,13 @@ export default class App extends Vue {
   protected selectedLight: number = 0;
   protected selectedReflectance: number = 0;
   protected selectComputed: SpecValue = {} as SpecValue;
-  private lights: SpecValue[] = [
-    require("./assets/spec_lights/d50.json"),
-    require("./assets/spec_lights/illA.json")
-  ];
-  private reflectance: SpecValue[] = [
-    require("./assets/spec_reflectance/black_dry_leaf.json"),
-    require("./assets/spec_reflectance/green_leaf.json"),
-    require("./assets/spec_reflectance/red_flower.json"),
-    require("./assets/spec_reflectance/yellow_flower.json")
-  ];
-  private colorMatch: { x: SpecValue; y: SpecValue; z: SpecValue } = {
-    x: require("./assets/spec_color_match/x.json"),
-    y: require("./assets/spec_color_match/y.json"),
-    z: require("./assets/spec_color_match/z.json")
-  };
+  private lights: SpecValue[] = colorData.lights;
+  private reflectance: SpecValue[] = colorData.reflectance;
+  private colorMatch: {
+    x: SpecValue;
+    y: SpecValue;
+    z: SpecValue;
+  } = colorData.colorMatch;
   private computedRGB: Irgb = { r: 0, g: 0, b: 0 };
   private rawXYZ: Ixyz = { x: 0, y: 0, z: 0 };
   private scaledXYZ: Ixyz = { x: 0, y: 0, z: 0 };
