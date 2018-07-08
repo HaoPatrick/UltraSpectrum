@@ -18,7 +18,7 @@
     </div>
     <div v-if="scaledXYZ !== NaN">
       <div style="width:30%;margin:auto;">
-        <el-slider @change="computeRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/5" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
+        <el-slider @change="updateRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/5" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
       </div>
       <div style="display:flex;justify-content:center;">
         <div>
@@ -92,6 +92,28 @@ export default class App extends Vue {
       this.lights[this.selectedLight].data,
       this.reflectance[this.selectedReflectance].data
     );
+    const testXYZ = {
+      x: arrayMulti(
+        this.lights[this.selectedLight].data,
+        this.colorMatch.x.data
+      )
+        .filter(item => item)
+        .reduce((a, b) => a + b),
+      y: arrayMulti(
+        this.lights[this.selectedLight].data,
+        this.colorMatch.y.data
+      )
+        .filter(item => item)
+        .reduce((a, b) => a + b),
+      z: arrayMulti(
+        this.lights[this.selectedLight].data,
+        this.colorMatch.z.data
+      )
+        .filter(item => item)
+        .reduce((a, b) => a + b)
+    };
+    // tslint:disable-next-line:no-console
+    console.log("light xyz:", testXYZ);
     const example = this.lights[this.selectedLight];
     const result: SpecValue = {
       name: "computed",
@@ -103,36 +125,40 @@ export default class App extends Vue {
       data: computedData
     };
     this.selectComputed = result;
-    this.colorMatching(result);
+    const xyz = this.colorMatching(result);
+    this.rawXYZ = xyz;
+    this.xyzScaleRatio = xyz.x + xyz.y + xyz.z;
+    const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
+    this.computedRGB = rgb;
   }
-
-  public colorMatching(spec: SpecValue) {
+  public updateRGB() {
+    const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
+    this.computedRGB = rgb;
+  }
+  public colorMatching(spec: SpecValue): Ixyz {
     const xData = arrayMulti(spec.data, this.colorMatch.x.data);
     const yData = arrayMulti(spec.data, this.colorMatch.y.data);
     const zData = arrayMulti(spec.data, this.colorMatch.z.data);
     const xSum = xData.filter(item => item).reduce((a, b) => a + b);
     const ySum = yData.filter(item => item).reduce((a, b) => a + b);
     const zSum = zData.filter(item => item).reduce((a, b) => a + b);
-    this.rawXYZ = {
+    return {
       x: xSum,
       y: ySum,
       z: zSum
     };
-    this.xyzScaleRatio = xSum + ySum + zSum;
-    this.computeRGB();
   }
-  public computeRGB() {
+  public xyz2rgb(xyz: Ixyz, xyzScale: number): Irgb {
     const scaled: Ixyz = {
-      x: this.rawXYZ.x / this.xyzScaleRatio,
-      y: this.rawXYZ.y / this.xyzScaleRatio,
-      z: this.rawXYZ.z / this.xyzScaleRatio
+      x: xyz.x / xyzScale,
+      y: xyz.y / xyzScale,
+      z: xyz.z / xyzScale
     };
     this.scaledXYZ = scaled;
     const r = 3.2406 * scaled.x - 1.5372 * scaled.y - 0.4986 * scaled.z;
     const g = -0.9689 * scaled.x + 1.8758 * scaled.y + 0.0415 * scaled.z;
     const b = 0.0557 * scaled.x - 0.204 * scaled.y + 1.057 * scaled.z;
-
-    this.computedRGB = {
+    return {
       r: this.gammaCorrection(r),
       g: this.gammaCorrection(g),
       b: this.gammaCorrection(b)
