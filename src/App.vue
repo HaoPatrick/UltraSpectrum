@@ -93,20 +93,15 @@ export default class App extends Vue {
   }
 
   public async updateReflectance(val: number) {
+    this.loading = true;
     const seleted = this.reflectance[val];
     this.selectedReflectance = await getSpectrum(seleted.name);
     this.updateChange();
+    this.loading = false;
   }
   public updateLight(val: number) {
     this.selectedLight = this.lights[val];
     this.updateChange();
-  }
-
-  public async loadSpectrum() {
-    const value = await getSpectrum(this.inputSpectrum);
-    this.selectedReflectance = value;
-    this.updateChange();
-    console.log(value);
   }
   public updateChange() {
     const computedData = arrayMulti(
@@ -164,7 +159,7 @@ export default class App extends Vue {
     };
   }
 
-  private async mounted() {
+  private async created() {
     this.loading = true;
     this.selectedLight = colorData.lights[0];
     this.selectedReflectance = colorData.reflectance[0];
