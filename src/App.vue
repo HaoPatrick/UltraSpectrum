@@ -47,6 +47,7 @@ import { arrayMulti, SpecValue, Ixyz, Irgb } from "./util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "./util";
 import * as colorData from "./util/colorData";
+import { getAt } from "./util/api";
 @Component({
   components: {
     SpecGraph
@@ -165,8 +166,9 @@ export default class App extends Vue {
     };
   }
 
-  private mounted() {
+  private async mounted() {
     this.updateChange();
+    await getAt();
   }
 
   private gammaCorrection(v: number): number {
