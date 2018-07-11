@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-loading="loading">
     <div>
       <span>Light: </span>
       <el-select @change="updateLight" v-model="elSelectLight" placeholder="Select">
@@ -7,11 +7,9 @@
         </el-option>
       </el-select>
       <span> Reflectance: </span>
-      <el-select @change="updateReflectance" v-model="elSelectRef" placeholder="Select">
+      <el-select filterable @change="updateReflectance" v-model="elSelectRef" placeholder="Select">
         <el-option v-for="(item,index) in reflectance" :key="item.name" :label="item.name" :value="index"></el-option>
       </el-select>
-      <el-input v-model="inputSpectrum" style="width:15%;margin-left:1em;"></el-input>
-      <el-button @click="loadSpectrum">Load</el-button>
     </div>
     <div class="graph-column">
       <SpecGraph v-if="selectedLight.name!==''" :id="'light'" :spec='selectedLight'></SpecGraph>
@@ -49,7 +47,7 @@ import { arrayMulti, SpecValue, Ixyz, Irgb } from "./util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "./util";
 import * as colorData from "./util/colorData";
-import { getSpectrum } from "./util/api";
+import { getSpectrum, getSpectrumNames } from "./util/api";
 @Component({
   components: {
     SpecGraph
@@ -65,10 +63,10 @@ import { getSpectrum } from "./util/api";
 })
 export default class App extends Vue {
   protected selectedLight: SpecValue = colorData.lights[0];
-  protected selectedReflectance: SpecValue = colorData.reflectance[0];
+  protected selectedReflectance!: SpecValue;
   protected selectComputed: SpecValue = {} as SpecValue;
   private lights: SpecValue[] = colorData.lights;
-  private reflectance: SpecValue[] = colorData.reflectance;
+  private reflectance: utilLib.ISpecName[] = colorData.reflectance;
   private colorMatch: {
     x: SpecValue;
     y: SpecValue;
@@ -82,6 +80,7 @@ export default class App extends Vue {
   private xyzScaleRatio: number = 1;
   private inputSpectrum: string = "";
   private util = utilLib;
+  private loading: boolean = false;
   private get validRGB() {
     return (
       this.computedRGB.r > 0 &&
@@ -93,8 +92,9 @@ export default class App extends Vue {
     );
   }
 
-  public updateReflectance(val: number) {
-    this.selectedReflectance = this.reflectance[val];
+  public async updateReflectance(val: number) {
+    const seleted = this.reflectance[val];
+    this.selectedReflectance = await getSpectrum(seleted.name);
     this.updateChange();
   }
   public updateLight(val: number) {
@@ -165,9 +165,12 @@ export default class App extends Vue {
   }
 
   private async mounted() {
+    this.loading = true;
     this.selectedLight = colorData.lights[0];
     this.selectedReflectance = colorData.reflectance[0];
-    this.updateChange();
+    this.reflectance = await getSpectrumNames();
+    await this.updateReflectance(0);
+    this.loading = false;
   }
 }
 </script>

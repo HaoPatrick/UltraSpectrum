@@ -10,6 +10,9 @@ export interface SpecValue {
     data: number[];
 }
 
+export interface ISpecName {
+    name: string;
+}
 export interface Ixyz {
     x: number;
     y: number;
