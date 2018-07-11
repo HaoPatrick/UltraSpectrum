@@ -1,3 +1,5 @@
+import { colorMatch } from "./colorData";
+
 export interface SpecValue {
     name: string;
     type: string;
@@ -30,4 +32,26 @@ export function arrayMulti(data1: number[], data2: number[]) {
 
 export function round3(val: number): number {
     return Math.round(val * 1000) / 1000;
+}
+
+export function gammaCorrection(v: number): number {
+    if (v <= 0.0031308) {
+        return 12.92 * v;
+    } else {
+        return (1 + 0.055) * Math.pow(v, 1 / 2.4) - 0.055;
+    }
+}
+
+export function colorMatching(spec: SpecValue): Ixyz {
+    const xData = arrayMulti(spec.data, colorMatch.x.data);
+    const yData = arrayMulti(spec.data, colorMatch.y.data);
+    const zData = arrayMulti(spec.data, colorMatch.z.data);
+    const xSum = xData.filter(item => item).reduce((a, b) => a + b);
+    const ySum = yData.filter(item => item).reduce((a, b) => a + b);
+    const zSum = zData.filter(item => item).reduce((a, b) => a + b);
+    return {
+        x: xSum,
+        y: ySum,
+        z: zSum
+    };
 }

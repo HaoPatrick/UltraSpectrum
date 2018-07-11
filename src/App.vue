@@ -2,18 +2,20 @@
   <div id="app">
     <div>
       <span>Light: </span>
-      <el-select @change="updateChange" placeholder="Select" v-model="selectedLight">
+      <el-select @change="updateLight" v-model="elSelectLight" placeholder="Select">
         <el-option v-for="(item,index) in lights" :key="item.name" :label="item.name" :value="index">
         </el-option>
       </el-select>
       <span> Reflectance: </span>
-      <el-select @change="updateChange" placeholder="Select" v-model="selectedReflectance">
+      <el-select @change="updateReflectance" v-model="elSelectRef" placeholder="Select">
         <el-option v-for="(item,index) in reflectance" :key="item.name" :label="item.name" :value="index"></el-option>
       </el-select>
+      <el-input v-model="inputSpectrum" style="width:15%;margin-left:1em;"></el-input>
+      <el-button @click="loadSpectrum">Load</el-button>
     </div>
     <div class="graph-column">
-      <SpecGraph v-if="selectedLight.name!==''" :id="'light'" :spec='lights[selectedLight]'></SpecGraph>
-      <SpecGraph v-if="selectedReflectance.name!==''" :id="'reflectance'" :spec='reflectance[selectedReflectance]'></SpecGraph>
+      <SpecGraph v-if="selectedLight.name!==''" :id="'light'" :spec='selectedLight'></SpecGraph>
+      <SpecGraph v-if="selectedReflectance.name!==''" :id="'reflectance'" :spec='selectedReflectance'></SpecGraph>
       <SpecGraph v-if="selectComputed.name!==''" :id="'computed'" :spec='selectComputed'></SpecGraph>
     </div>
     <div v-if="scaledXYZ !== NaN">
@@ -47,7 +49,7 @@ import { arrayMulti, SpecValue, Ixyz, Irgb } from "./util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "./util";
 import * as colorData from "./util/colorData";
-import { getAt } from "./util/api";
+import { getSpectrum } from "./util/api";
 @Component({
   components: {
     SpecGraph
@@ -62,8 +64,8 @@ import { getAt } from "./util/api";
   }
 })
 export default class App extends Vue {
-  protected selectedLight: number = 0;
-  protected selectedReflectance: number = 0;
+  protected selectedLight: SpecValue = colorData.lights[0];
+  protected selectedReflectance: SpecValue = colorData.reflectance[0];
   protected selectComputed: SpecValue = {} as SpecValue;
   private lights: SpecValue[] = colorData.lights;
   private reflectance: SpecValue[] = colorData.reflectance;
@@ -75,7 +77,10 @@ export default class App extends Vue {
   private computedRGB: Irgb = { r: 0, g: 0, b: 0 };
   private rawXYZ: Ixyz = { x: 0, y: 0, z: 0 };
   private scaledXYZ: Ixyz = { x: 0, y: 0, z: 0 };
+  private elSelectLight: number = 0;
+  private elSelectRef: number = 0;
   private xyzScaleRatio: number = 1;
+  private inputSpectrum: string = "";
   private util = utilLib;
   private get validRGB() {
     return (
@@ -88,34 +93,40 @@ export default class App extends Vue {
     );
   }
 
+  public updateReflectance(val: number) {
+    this.selectedReflectance = this.reflectance[val];
+    this.updateChange();
+  }
+  public updateLight(val: number) {
+    this.selectedLight = this.lights[val];
+    this.updateChange();
+  }
+
+  public async loadSpectrum() {
+    const value = await getSpectrum(this.inputSpectrum);
+    this.selectedReflectance = value;
+    this.updateChange();
+    console.log(value);
+  }
   public updateChange() {
     const computedData = arrayMulti(
-      this.lights[this.selectedLight].data,
-      this.reflectance[this.selectedReflectance].data
+      this.selectedLight.data,
+      this.selectedReflectance.data
     );
     const testXYZ = {
-      x: arrayMulti(
-        this.lights[this.selectedLight].data,
-        this.colorMatch.x.data
-      )
+      x: arrayMulti(this.selectedLight.data, this.colorMatch.x.data)
         .filter(item => item)
         .reduce((a, b) => a + b),
-      y: arrayMulti(
-        this.lights[this.selectedLight].data,
-        this.colorMatch.y.data
-      )
+      y: arrayMulti(this.selectedLight.data, this.colorMatch.y.data)
         .filter(item => item)
         .reduce((a, b) => a + b),
-      z: arrayMulti(
-        this.lights[this.selectedLight].data,
-        this.colorMatch.z.data
-      )
+      z: arrayMulti(this.selectedLight.data, this.colorMatch.z.data)
         .filter(item => item)
         .reduce((a, b) => a + b)
     };
     // tslint:disable-next-line:no-console
     console.log("light xyz:", testXYZ);
-    const example = this.lights[this.selectedLight];
+    const example = this.selectedLight;
     const result: SpecValue = {
       name: "computed",
       type: "computed",
@@ -126,7 +137,7 @@ export default class App extends Vue {
       data: computedData
     };
     this.selectComputed = result;
-    const xyz = this.colorMatching(result);
+    const xyz = utilLib.colorMatching(result);
     this.rawXYZ = xyz;
     this.xyzScaleRatio = xyz.x + xyz.y + xyz.z;
     const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
@@ -135,19 +146,6 @@ export default class App extends Vue {
   public updateRGB() {
     const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
     this.computedRGB = rgb;
-  }
-  public colorMatching(spec: SpecValue): Ixyz {
-    const xData = arrayMulti(spec.data, this.colorMatch.x.data);
-    const yData = arrayMulti(spec.data, this.colorMatch.y.data);
-    const zData = arrayMulti(spec.data, this.colorMatch.z.data);
-    const xSum = xData.filter(item => item).reduce((a, b) => a + b);
-    const ySum = yData.filter(item => item).reduce((a, b) => a + b);
-    const zSum = zData.filter(item => item).reduce((a, b) => a + b);
-    return {
-      x: xSum,
-      y: ySum,
-      z: zSum
-    };
   }
   public xyz2rgb(xyz: Ixyz, xyzScale: number): Irgb {
     const scaled: Ixyz = {
@@ -160,23 +158,16 @@ export default class App extends Vue {
     const g = -0.9689 * scaled.x + 1.8758 * scaled.y + 0.0415 * scaled.z;
     const b = 0.0557 * scaled.x - 0.204 * scaled.y + 1.057 * scaled.z;
     return {
-      r: this.gammaCorrection(r),
-      g: this.gammaCorrection(g),
-      b: this.gammaCorrection(b)
+      r: utilLib.gammaCorrection(r),
+      g: utilLib.gammaCorrection(g),
+      b: utilLib.gammaCorrection(b)
     };
   }
 
   private async mounted() {
+    this.selectedLight = colorData.lights[0];
+    this.selectedReflectance = colorData.reflectance[0];
     this.updateChange();
-    await getAt();
-  }
-
-  private gammaCorrection(v: number): number {
-    if (v <= 0.0031308) {
-      return 12.92 * v;
-    } else {
-      return (1 + 0.055) * Math.pow(v, 1 / 2.4) - 0.055;
-    }
   }
 }
 </script>
