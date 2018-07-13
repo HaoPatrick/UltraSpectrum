@@ -48,6 +48,7 @@ import { Breadcrumb } from "element-ui";
 import * as utilLib from "./util";
 import * as colorData from "./util/colorData";
 import { getSpectrum, getSpectrumNames } from "./util/api";
+import * as api from "./util/api";
 @Component({
   components: {
     SpecGraph
@@ -166,6 +167,7 @@ export default class App extends Vue {
     this.reflectance = await getSpectrumNames();
     await this.updateReflectance(0);
     this.loading = false;
+    console.log(await api.getAllNames());
   }
 }
 </script>

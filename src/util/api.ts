@@ -1,5 +1,7 @@
 import { app } from "./firebase";
 import { SpecValue, ISpecName } from "./index";
+
+const API_ENDPOINT = "https://ultraspectrum.azurewebsites.net/api";
 (async () =>
     app.firestore().enablePersistence()
 )();
@@ -24,4 +26,10 @@ export async function getSpectrumNames(): Promise<ISpecName[]> {
         return item.data();
     });
     return results as ISpecName[];
+}
+
+export async function getAllNames() {
+    const response = await fetch(`${API_ENDPOINT}/AllSpectrum`);
+    const jsonResponse = await response.json();
+    return jsonResponse;
 }
