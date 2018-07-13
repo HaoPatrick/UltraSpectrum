@@ -8,7 +8,7 @@
       </el-select>
       <span> Reflectance: </span>
       <el-select filterable @change="updateReflectance" v-model="elSelectRef" placeholder="Select">
-        <el-option v-for="(item,index) in reflectance" :key="item.name" :label="item.name" :value="index"></el-option>
+        <el-option v-for="(item,index) in reflectance" :key="item" :label="item" :value="index"></el-option>
       </el-select>
     </div>
     <div class="graph-column">
@@ -47,7 +47,6 @@ import { arrayMulti, SpecValue, Ixyz, Irgb } from "./util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "./util";
 import * as colorData from "./util/colorData";
-import { getSpectrum, getSpectrumNames } from "./util/api";
 import * as api from "./util/api";
 @Component({
   components: {
@@ -67,7 +66,7 @@ export default class App extends Vue {
   protected selectedReflectance!: SpecValue;
   protected selectComputed: SpecValue = {} as SpecValue;
   private lights: SpecValue[] = colorData.lights;
-  private reflectance: utilLib.ISpecName[] = colorData.reflectance;
+  private reflectance: string[] = [];
   private colorMatch: {
     x: SpecValue;
     y: SpecValue;
@@ -96,7 +95,7 @@ export default class App extends Vue {
   public async updateReflectance(val: number) {
     this.loading = true;
     const seleted = this.reflectance[val];
-    this.selectedReflectance = await getSpectrum(seleted.name);
+    this.selectedReflectance = await api.getSpecByName(seleted);
     this.updateChange();
     this.loading = false;
   }
@@ -164,10 +163,9 @@ export default class App extends Vue {
     this.loading = true;
     this.selectedLight = colorData.lights[0];
     this.selectedReflectance = colorData.reflectance[0];
-    this.reflectance = await getSpectrumNames();
+    this.reflectance = await api.getAllNames();
     await this.updateReflectance(0);
     this.loading = false;
-    console.log(await api.getAllNames());
   }
 }
 </script>
