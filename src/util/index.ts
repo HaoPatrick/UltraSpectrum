@@ -1,6 +1,6 @@
 import { colorMatch } from "./colorData";
 
-export interface SpecValue {
+export interface ISpecValue {
     name: string;
     type: string;
     type_max: number;
@@ -8,6 +8,7 @@ export interface SpecValue {
     end_nm: number;
     resolution: number;
     data: number[];
+    rgb_d65: number[];
 }
 
 export interface ISpecName {
@@ -45,7 +46,15 @@ export function gammaCorrection(v: number): number {
     }
 }
 
-export function colorMatching(spec: SpecValue): Ixyz {
+export function norm3(vector: number[]) {
+    return Math.sqrt(
+        Math.pow(vector[0], 2) +
+        Math.pow(vector[1], 2) +
+        Math.pow(vector[2], 2)
+    )
+}
+
+export function colorMatching(spec: ISpecValue): Ixyz {
     const xData = arrayMulti(spec.data, colorMatch.x.data);
     const yData = arrayMulti(spec.data, colorMatch.y.data);
     const zData = arrayMulti(spec.data, colorMatch.z.data);

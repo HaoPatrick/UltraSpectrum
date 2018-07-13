@@ -43,7 +43,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import SpecGraph from "../components/SpecGraph.vue";
-import { arrayMulti, SpecValue, Ixyz, Irgb } from "../util";
+import { arrayMulti, ISpecValue, Ixyz, Irgb } from "../util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "../util";
 import * as colorData from "../util/colorData";
@@ -62,15 +62,15 @@ import * as api from "../util/api";
   }
 })
 export default class App extends Vue {
-  protected selectedLight: SpecValue = colorData.lights[0];
-  protected selectedReflectance!: SpecValue;
-  protected selectComputed: SpecValue = {} as SpecValue;
-  private lights: SpecValue[] = colorData.lights;
+  protected selectedLight: ISpecValue = colorData.lights[0];
+  protected selectedReflectance!: ISpecValue;
+  protected selectComputed: ISpecValue = {} as ISpecValue;
+  private lights: ISpecValue[] = colorData.lights;
   private reflectance: string[] = [];
   private colorMatch: {
-    x: SpecValue;
-    y: SpecValue;
-    z: SpecValue;
+    x: ISpecValue;
+    y: ISpecValue;
+    z: ISpecValue;
   } = colorData.colorMatch;
   private computedRGB: Irgb = { r: 0, g: 0, b: 0 };
   private rawXYZ: Ixyz = { x: 0, y: 0, z: 0 };
@@ -122,14 +122,15 @@ export default class App extends Vue {
     // tslint:disable-next-line:no-console
     console.log("light xyz:", testXYZ);
     const example = this.selectedLight;
-    const result: SpecValue = {
+    const result: ISpecValue = {
       name: "computed",
       type: "computed",
       type_max: example.type_max * this.selectComputed.type_max,
       start_nm: example.start_nm,
       end_nm: example.end_nm,
       resolution: example.resolution,
-      data: computedData
+      data: computedData,
+      rgb_d65: []
     };
     this.selectComputed = result;
     const xyz = utilLib.colorMatching(result);
