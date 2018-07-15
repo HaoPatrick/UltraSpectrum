@@ -54,6 +54,12 @@ export function norm3(vector: number[]) {
     )
 }
 
+export function lightMax(spec: ISpecValue): number {
+    const yData = arrayMulti(spec.data, colorMatch.y.data);
+    const ySum = yData.filter(item => item).reduce((a, b) => a + b);
+    return ySum;
+}
+
 export function colorMatching(spec: ISpecValue): Ixyz {
     const xData = arrayMulti(spec.data, colorMatch.x.data);
     const yData = arrayMulti(spec.data, colorMatch.y.data);

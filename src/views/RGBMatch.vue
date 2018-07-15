@@ -15,6 +15,9 @@
           <span> B: </span>
           <el-input-number v-model="numB" :precision="2" :step="0.05" :min="0" :max="1"></el-input-number>
         </div>
+        <div class="color-input">
+          <el-color-picker color-format="rgb" v-model="pickerColor"></el-color-picker>
+        </div>
       </section>
       <section style="margin-left:1em;">
         <el-button @click="findMatch">Find a match</el-button>
@@ -59,11 +62,12 @@ import { TruncateOptions } from "lodash";
 })
 export default class RGBMatch extends Vue {
   private numR: number = 0.65;
-  private numG: number = 0.20;
+  private numG: number = 0.2;
   private numB: number = 0.35;
   private bestMatch: util.ISpecValue = {} as util.ISpecValue;
   private specReady: boolean = false;
   private matchRGB: util.Irgb = {} as util.Irgb;
+  private pickerColor: string = "";
 
   private async findMatch() {
     const result = await api.findRGBMatch({

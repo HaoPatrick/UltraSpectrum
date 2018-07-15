@@ -80,6 +80,7 @@ export default class App extends Vue {
   private xyzScaleRatio: number = 1;
   private inputSpectrum: string = "";
   private util = utilLib;
+  private lightMaxN: number = 20;
   private loading: boolean = false;
   private get validRGB() {
     return (
@@ -101,6 +102,7 @@ export default class App extends Vue {
   }
   public updateLight(val: number) {
     this.selectedLight = this.lights[val];
+    this.lightMaxN = utilLib.lightMax(this.selectedLight);
     this.updateChange();
   }
   public updateChange() {
@@ -135,7 +137,7 @@ export default class App extends Vue {
     this.selectComputed = result;
     const xyz = utilLib.colorMatching(result);
     this.rawXYZ = xyz;
-    this.xyzScaleRatio = xyz.x + xyz.y + xyz.z;
+    this.xyzScaleRatio = this.lightMaxN;
     const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
     this.computedRGB = rgb;
   }
@@ -163,6 +165,7 @@ export default class App extends Vue {
   private async created() {
     this.loading = true;
     this.selectedLight = colorData.lights[0];
+    this.lightMaxN = utilLib.lightMax(this.selectedLight);
     this.selectedReflectance = colorData.reflectance[0];
     this.reflectance = await api.getAllNames();
     await this.updateReflectance(0);
