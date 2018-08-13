@@ -5,7 +5,7 @@ const API_ENDPOINT = 'https://ultraspectrum.azurewebsites.net/api';
 
 export async function getSpecByName(name: string): Promise<ISpecValue> {
   const result = await fetch(`${API_ENDPOINT}/GetSpectrum?name=${name}`);
-  console.log(result, 'result');
+  console.log(result, "result");
   const jsonResponse = await result.json();
   return jsonResponse;
 }
