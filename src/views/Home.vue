@@ -62,10 +62,10 @@ import * as api from "../util/api";
   }
 })
 export default class App extends Vue {
-  protected selectedLight: ISpecValue = colorData.lights[0];
+  protected selectedLight: ISpecValue = Object.values(colorData.lights)[0];
   protected selectedReflectance: ISpecValue = {} as ISpecValue;
   protected selectComputed: ISpecValue = {} as ISpecValue;
-  private lights: ISpecValue[] = colorData.lights;
+  private lights: ISpecValue[] = Object.values(colorData.lights);
   private reflectance: string[] = [];
   private colorMatch: {
     x: ISpecValue;
@@ -96,12 +96,8 @@ export default class App extends Vue {
   public async updateReflectance(val: number) {
     this.loading = true;
     const seleted = this.reflectance[val];
-    console.log("hrere", seleted);
     this.selectedReflectance = await api.getSpecByName(seleted);
-    console.log("hrere");
-
     this.updateChange();
-
     this.loading = false;
   }
   public updateLight(val: number) {
@@ -139,7 +135,7 @@ export default class App extends Vue {
       rgb_d65: []
     };
     this.selectComputed = result;
-    const xyz = utilLib.colorMatching(result);
+    const xyz = utilLib.spec2xyz(result);
     this.rawXYZ = xyz;
     this.xyzScaleRatio = this.lightMaxN;
     const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
@@ -156,24 +152,16 @@ export default class App extends Vue {
       z: xyz.z / xyzScale
     };
     this.scaledXYZ = scaled;
-    const r = 3.2406 * scaled.x - 1.5372 * scaled.y - 0.4986 * scaled.z;
-    const g = -0.9689 * scaled.x + 1.8758 * scaled.y + 0.0415 * scaled.z;
-    const b = 0.0557 * scaled.x - 0.204 * scaled.y + 1.057 * scaled.z;
-    return {
-      r: utilLib.gammaCorrection(r),
-      g: utilLib.gammaCorrection(g),
-      b: utilLib.gammaCorrection(b)
-    };
+    return utilLib.xyz2rgb(scaled);
   }
 
   private async created() {
     this.loading = true;
-    this.selectedLight = colorData.lights[0];
+    this.selectedLight = this.lights[0];
     this.lightMaxN = utilLib.lightMax(this.selectedLight);
     this.selectedReflectance = colorData.reflectance[0];
     this.reflectance = await api.getAllNames();
     await this.updateReflectance(0);
-    console.log("hrere");
 
     this.loading = false;
   }

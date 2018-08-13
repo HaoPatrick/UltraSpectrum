@@ -5,7 +5,7 @@
       <li style="color: rgb(255, 255, 255); border-bottom-color: transparent; background-color: rgb(84, 92, 100);" class="el-menu-item">🌈 Ultra Spectrum 🌈</li>
       <el-menu-item index="/">Home</el-menu-item>
       <el-menu-item index="/rgb">RGB to Spectrum</el-menu-item>
-      <el-menu-item index="/make">Spectrum Maker</el-menu-item>
+      <el-menu-item index="/maker">Spectrum Maker</el-menu-item>
     </el-menu>
     <router-view></router-view>
   </div>
