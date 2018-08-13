@@ -52,6 +52,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import SpecGraph from "../components/SpecGraph.vue";
 import * as api from "../util/api";
+import { RGB, XYZ } from "../util/ColorSpace";
 import * as util from "../util";
 import { TruncateOptions } from "lodash";
 
@@ -66,7 +67,7 @@ export default class RGBMatch extends Vue {
   private numB: number = 0.35;
   private bestMatch: util.ISpecValue = {} as util.ISpecValue;
   private specReady: boolean = false;
-  private matchRGB: util.Irgb = {} as util.Irgb;
+  private matchRGB = new RGB(0, 0, 0);
   private pickerColor: string = "";
 
   private async findMatch() {
@@ -80,11 +81,11 @@ export default class RGBMatch extends Vue {
     const scale =
       util.norm3([this.numR, this.numG, this.numB]) /
       util.norm3(result.rgb_d65);
-    this.matchRGB = {
-      r: result.rgb_d65[0] * scale,
-      g: result.rgb_d65[1] * scale,
-      b: result.rgb_d65[2] * scale
-    };
+    this.matchRGB = new RGB(
+      result.rgb_d65[0] * scale,
+      result.rgb_d65[1] * scale,
+      result.rgb_d65[2] * scale
+    );
   }
 }
 </script>

@@ -43,11 +43,13 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import SpecGraph from "../components/SpecGraph.vue";
-import { arrayMulti, ISpecValue, Ixyz, Irgb } from "../util";
+import { arrayMulti, ISpecValue } from "../util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "../util";
 import * as colorData from "../util/colorData";
 import * as api from "../util/api";
+import { RGB, XYZ } from "../util/ColorSpace";
+
 @Component({
   components: {
     SpecGraph
@@ -72,9 +74,9 @@ export default class App extends Vue {
     y: ISpecValue;
     z: ISpecValue;
   } = colorData.colorMatch;
-  private computedRGB: Irgb = { r: 0, g: 0, b: 0 };
-  private rawXYZ: Ixyz = { x: 0, y: 0, z: 0 };
-  private scaledXYZ: Ixyz = { x: 0, y: 0, z: 0 };
+  private computedRGB = new RGB(0, 0, 0);
+  private rawXYZ = new XYZ(0, 0, 0);
+  private scaledXYZ = new XYZ(0, 0, 0);
   private elSelectLight: number = 0;
   private elSelectRef: number = 0;
   private xyzScaleRatio: number = 1;
@@ -145,14 +147,14 @@ export default class App extends Vue {
     const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
     this.computedRGB = rgb;
   }
-  public xyz2rgb(xyz: Ixyz, xyzScale: number): Irgb {
-    const scaled: Ixyz = {
-      x: xyz.x / xyzScale,
-      y: xyz.y / xyzScale,
-      z: xyz.z / xyzScale
-    };
+  public xyz2rgb(xyz: XYZ, xyzScale: number): RGB {
+    const scaled = new XYZ(
+      xyz.x / xyzScale,
+      xyz.y / xyzScale,
+      xyz.z / xyzScale
+    );
     this.scaledXYZ = scaled;
-    return utilLib.xyz2rgb(scaled);
+    return scaled.toRGB();
   }
 
   private async created() {

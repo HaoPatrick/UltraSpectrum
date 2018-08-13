@@ -12,6 +12,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { numers2spec, ISpecValue } from "../util";
+import * as utilLib from "../util";
 import SpecGraph from "../components/SpecGraph.vue";
 
 @Component({
@@ -29,8 +30,12 @@ export default class SpecMaker extends Vue {
       .filter(item => item)
       .map(item => parseFloat(item));
     const spectrum = numers2spec(values);
-    console.log(spectrum);
     this.parsedSpec = spectrum;
+
+    const xyz = utilLib.spec2xyz(spectrum);
+    const xyzNormed = xyz.norm();
+    const rgb = xyzNormed.toRGB();
+    console.log(spectrum, xyz, rgb);
   }
 }
 </script>

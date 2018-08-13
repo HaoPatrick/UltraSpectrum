@@ -1,5 +1,5 @@
-import { colorMatch, lights } from "./colorData";
-
+import { colorMatch } from "./colorData";
+import { XYZ, RGB } from "./ColorSpace";
 export interface ISpecValue {
   name: string;
   type: string;
@@ -13,17 +13,6 @@ export interface ISpecValue {
 
 export interface ISpecName {
   name: string;
-}
-export interface Ixyz {
-  x: number;
-  y: number;
-  z: number;
-}
-
-export interface Irgb {
-  r: number;
-  g: number;
-  b: number;
 }
 
 export function arrayMulti(data1: number[], data2: number[]) {
@@ -57,25 +46,14 @@ export function lightMax(spec: ISpecValue): number {
   return ySum;
 }
 
-export function spec2xyz(spec: ISpecValue): Ixyz {
+export function spec2xyz(spec: ISpecValue): XYZ {
   const xData = arrayMulti(spec.data, colorMatch.x.data);
   const yData = arrayMulti(spec.data, colorMatch.y.data);
   const zData = arrayMulti(spec.data, colorMatch.z.data);
   const xSum = xData.filter(item => item).reduce((a, b) => a + b);
   const ySum = yData.filter(item => item).reduce((a, b) => a + b);
   const zSum = zData.filter(item => item).reduce((a, b) => a + b);
-  return { x: xSum, y: ySum, z: zSum };
-}
-
-export function xyz2rgb(xyz: Ixyz): Irgb {
-  const r = 3.2406 * xyz.x - 1.5372 * xyz.y - 0.4986 * xyz.z;
-  const g = -0.9689 * xyz.x + 1.8758 * xyz.y + 0.0415 * xyz.z;
-  const b = 0.0557 * xyz.x - 0.204 * xyz.y + 1.057 * xyz.z;
-  return {
-    r: gammaCorrection(r),
-    g: gammaCorrection(g),
-    b: gammaCorrection(b)
-  };
+  return new XYZ(xSum, ySum, zSum);
 }
 
 export function numers2spec(
