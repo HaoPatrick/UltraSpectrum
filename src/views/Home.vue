@@ -63,7 +63,7 @@ import * as api from "../util/api";
 })
 export default class App extends Vue {
   protected selectedLight: ISpecValue = colorData.lights[0];
-  protected selectedReflectance!: ISpecValue;
+  protected selectedReflectance: ISpecValue = {} as ISpecValue;
   protected selectComputed: ISpecValue = {} as ISpecValue;
   private lights: ISpecValue[] = colorData.lights;
   private reflectance: string[] = [];
@@ -96,8 +96,12 @@ export default class App extends Vue {
   public async updateReflectance(val: number) {
     this.loading = true;
     const seleted = this.reflectance[val];
+    console.log("hrere", seleted);
     this.selectedReflectance = await api.getSpecByName(seleted);
+    console.log("hrere");
+
     this.updateChange();
+
     this.loading = false;
   }
   public updateLight(val: number) {
@@ -169,6 +173,8 @@ export default class App extends Vue {
     this.selectedReflectance = colorData.reflectance[0];
     this.reflectance = await api.getAllNames();
     await this.updateReflectance(0);
+    console.log("hrere");
+
     this.loading = false;
   }
 }

@@ -85,7 +85,6 @@ export default class RGBMatch extends Vue {
       g: result.rgb_d65[1] * scale,
       b: result.rgb_d65[2] * scale
     };
-    console.log(this.matchRGB);
   }
 }
 </script>

@@ -51,7 +51,7 @@ export function norm3(vector: number[]) {
         Math.pow(vector[0], 2) +
         Math.pow(vector[1], 2) +
         Math.pow(vector[2], 2)
-    )
+    );
 }
 
 export function lightMax(spec: ISpecValue): number {
