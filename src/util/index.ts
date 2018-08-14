@@ -33,6 +33,13 @@ export function gammaCorrection(v: number): number {
     return (1 + 0.055) * Math.pow(v, 1 / 2.4) - 0.055;
   }
 }
+export function gammaCorrectionRev(v: number): number {
+  if (v <= 0.04045) {
+    return v / 12.92;
+  } else {
+    return Math.pow((v + 0.055) / (1 + 0.055), 2.4);
+  }
+}
 
 export function norm3(vector: number[]) {
   return Math.sqrt(

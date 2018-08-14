@@ -1,4 +1,4 @@
-import { gammaCorrection } from "./index";
+import { gammaCorrection, gammaCorrectionRev } from "./index";
 
 export class RGB {
   public r: number;
@@ -11,6 +11,16 @@ export class RGB {
   }
   public sum(): number {
     return this.r + this.g + this.b;
+  }
+
+  public toXYZ(): XYZ {
+    const lr = gammaCorrectionRev(this.r);
+    const lg = gammaCorrectionRev(this.g);
+    const lb = gammaCorrectionRev(this.b);
+    const x = 0.4124 * lr + 0.3576 * lg + 0.1805 * lb;
+    const y = 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
+    const z = 0.0193 * lr + 0.1192 * lg + 0.9505 * lb;
+    return new XYZ(x, y, z);
   }
 }
 

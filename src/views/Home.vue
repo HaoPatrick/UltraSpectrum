@@ -16,25 +16,12 @@
       <SpecGraph v-if="selectedReflectance.name!==''" :id="'reflectance'" :spec='selectedReflectance'></SpecGraph>
       <SpecGraph v-if="selectComputed.name!==''" :id="'computed'" :spec='selectComputed'></SpecGraph>
     </div>
-    <div v-if="scaledXYZ !== NaN">
+    <div v-if="loading===false">
       <div style="width:30%;margin:auto;">
         <el-slider @change="updateRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/5" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
       </div>
-      <div style="display:flex;justify-content:center;">
-        <div>
-          <p>
-            xyz: ({{scaledXYZ.x|round3}}, {{scaledXYZ.y|round3}}, {{scaledXYZ.z|round3}})
-          </p>
-          <p :style="`color: ${validRGB?'inherit':'#da3f3f'};`">
-            rgb: ({{computedRGB.r|round3}}, {{computedRGB.g|round3}}, {{computedRGB.b|round3}})
-          </p>
-          <p :style="`color: ${validRGB?'inherit':'#da3f3f'};`">
-            rgb: ({{computedRGB.r*255|round}}, {{computedRGB.g*255|round}}, {{computedRGB.b*255|round}})
-          </p>
-        </div>
-        <div>
-          <div :style="`backgroundColor:rgb(${computedRGB.r*255},${computedRGB.g*255},${computedRGB.b*255})`" style="margin-left:1em;width:4em;height:4em;"></div>
-        </div>
+      <div>
+        <ColorBlock :color="computedRGB"></ColorBlock>
       </div>
     </div>
   </div>
@@ -43,6 +30,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import SpecGraph from "../components/SpecGraph.vue";
+import ColorBlock from "../components/ColorBlock.vue";
 import { arrayMulti, ISpecValue } from "../util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "../util";
@@ -52,15 +40,8 @@ import { RGB, XYZ } from "../util/ColorSpace";
 
 @Component({
   components: {
-    SpecGraph
-  },
-  filters: {
-    round3(val: number) {
-      return Math.round(val * 1000) / 1000;
-    },
-    round(val: number) {
-      return Math.round(val);
-    }
+    SpecGraph,
+    ColorBlock
   }
 })
 export default class App extends Vue {
@@ -84,16 +65,6 @@ export default class App extends Vue {
   private util = utilLib;
   private lightMaxN: number = 20;
   private loading: boolean = false;
-  private get validRGB() {
-    return (
-      this.computedRGB.r > 0 &&
-      this.computedRGB.r < 1 &&
-      this.computedRGB.g > 0 &&
-      this.computedRGB.g < 1 &&
-      this.computedRGB.b > 0 &&
-      this.computedRGB.b < 1
-    );
-  }
 
   public async updateReflectance(val: number) {
     this.loading = true;
