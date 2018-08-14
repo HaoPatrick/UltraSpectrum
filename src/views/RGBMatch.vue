@@ -57,11 +57,9 @@ export default class RGBMatch extends Vue {
   }
 
   private async findMatch() {
-    const result = await api.findRGBMatch({
-      r: this.numR,
-      g: this.numG,
-      b: this.numB
-    });
+    const result = await api.findRGBMatch(
+      new RGB(this.numR, this.numG, this.numB)
+    );
     this.bestMatch = result;
     this.specReady = true;
     const scale =

@@ -143,6 +143,7 @@ export default class App extends Vue {
 <style scoped>
 .graph-column {
   display: flex;
+  flex-wrap: wrap;
 }
 p {
   margin-top: 0.4em;
