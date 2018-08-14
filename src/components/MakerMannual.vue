@@ -17,8 +17,8 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { numers2spec, ISpecValue } from "../util";
 import * as utilLib from "../util";
-import SpecGraph from "../components/SpecGraph.vue";
 import { RGB } from "@/util/ColorSpace";
+import SpecGraph from "../components/SpecGraph.vue";
 import ColorBlock from "../components/ColorBlock.vue";
 
 @Component({
