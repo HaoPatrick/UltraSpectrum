@@ -1,16 +1,24 @@
 <template>
-  <div>
-    <div>
-      <el-input type="textarea" :rows="10" placeholder="Please input" v-model="userInput">
-      </el-input>
-    </div>
-    <el-button @click="parseInput">Parse</el-button>
-    <el-button @click="downloadSpec">Download</el-button>
-    <div v-if="loading===false" style="display:flex;">
-      <SpecGraph :id="'parsed'" :spec="parsedSpec"></SpecGraph>
-      <ColorBlock :color="rgb"></ColorBlock>
-    </div>
-  </div>
+  <el-tabs tab-position="left" style="flex-grow:2;">
+    <el-tab-pane label="Mannual Input">
+      <div>
+        <div>
+          <el-input style="width:100% !important;" type="textarea" :rows="10" placeholder="Please input" v-model="userInput">
+          </el-input>
+        </div>
+        <el-button @click="parseInput">Parse</el-button>
+        <el-button @click="downloadSpec">Download</el-button>
+        <div v-if="loading===false" style="display:flex;">
+          <SpecGraph :id="'parsed'" :spec="parsedSpec"></SpecGraph>
+          <ColorBlock :color="rgb"></ColorBlock>
+        </div>
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="Planckian Locus">Planckian Locus</el-tab-pane>
+    <el-tab-pane label="Role">Role</el-tab-pane>
+    <el-tab-pane label="Task">Task</el-tab-pane>
+  </el-tabs>
+
 </template>
 
 <script lang="ts">
@@ -48,8 +56,7 @@ export default class SpecMaker extends Vue {
   }
   private downloadSpec() {
     if (this.loading === true) {
-      this.$message("spectrum not loaded");
-      return;
+      this.parseInput();
     }
     const element = document.createElement("a");
     element.setAttribute(
@@ -68,4 +75,7 @@ export default class SpecMaker extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.el-tabs {
+  margin: 0em 1em 0 1em;
+}
 </style>

@@ -1,7 +1,6 @@
 <template>
-  <div id="app">
-    <el-menu style="margin-bottom:1em;" :router="true" :default-active="activeIndex" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-      <!-- <el-menu-item index="/">Ultra Spectrum</el-menu-item> -->
+  <div id="app" style=" display:flex;flex-direction:column;height:100vh;">
+    <el-menu :router="true" :default-active="activeIndex" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
       <li style="color: rgb(255, 255, 255); border-bottom-color: transparent; background-color: rgb(84, 92, 100);" class="el-menu-item">🌈 Ultra Spectrum 🌈</li>
       <el-menu-item index="/">Home</el-menu-item>
       <el-menu-item index="/rgb">RGB to Spectrum</el-menu-item>
