@@ -9,13 +9,13 @@
                 rgb:
                 <el-tag type="info" size="small">{{rgb.r|round3}}</el-tag>
                 <el-tag type="info" size="small">{{rgb.g|round3}}</el-tag>
-                <el-tag type="info" size="small">{{rgb.g|round3}}</el-tag>
+                <el-tag type="info" size="small">{{rgb.b|round3}}</el-tag>
             </p>
             <p :style="`color: ${validRGB?'inherit':'#da3f3f'};`">
                 rgb:
                 <el-tag type="info" size="small">{{rgb.r*255|round}}</el-tag>
                 <el-tag type="info" size="small">{{rgb.g*255|round}}</el-tag>
-                <el-tag type="info" size="small">{{rgb.g*255|round}}</el-tag>
+                <el-tag type="info" size="small">{{rgb.b*255|round}}</el-tag>
             </p>
             <p>
                 xyz:
