@@ -12,7 +12,9 @@ import range from "lodash/range";
 @Component
 export default class SpecGraph extends Vue {
   @Prop() private spec!: any;
-  @Prop() private id!: string;
+  private id: string = Math.random()
+    .toString(36)
+    .substr(2, 7);
   private chart!: echarts.ECharts;
   private mounted() {
     this.chart = echarts.init(document.getElementById(

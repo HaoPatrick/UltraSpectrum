@@ -5,11 +5,7 @@
       </el-input>
     </div>
     <el-button @click="parseInput">Parse</el-button>
-    <el-button @click="downloadSpec">Download</el-button>
-    <div v-if="loading===false" style="display:flex;">
-      <SpecGraph :id="'parsed'" :spec="parsedSpec"></SpecGraph>
-      <ColorBlock :color="rgb"></ColorBlock>
-    </div>
+    <DetailedGraph v-if="loading===false" :spectrum="parsedSpec"></DetailedGraph>
   </div>
 </template>
 
@@ -18,13 +14,11 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { numers2spec, ISpecValue } from "../util";
 import * as utilLib from "../util";
 import { RGB } from "@/util/ColorSpace";
-import SpecGraph from "../components/SpecGraph.vue";
-import ColorBlock from "../components/ColorBlock.vue";
+import DetailedGraph from "@/components/DetailedGraph.vue";
 
 @Component({
   components: {
-    SpecGraph,
-    ColorBlock
+    DetailedGraph
   }
 })
 export default class MakerMannual extends Vue {
@@ -40,27 +34,7 @@ export default class MakerMannual extends Vue {
       .map(item => parseFloat(item));
     const spectrum = numers2spec(values);
     this.parsedSpec = spectrum;
-
-    const xyz = utilLib.spec2xyz(spectrum);
-    const xyzNormed = xyz.norm();
-    this.rgb = xyzNormed.toRGB();
     this.loading = false;
-  }
-  private downloadSpec() {
-    if (this.loading === true) {
-      this.parseInput();
-    }
-    const element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:application/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(this.parsedSpec))
-    );
-    element.setAttribute("download", `${this.parsedSpec.name}.json`);
-    element.style.display = "none";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
   }
 }
 </script>

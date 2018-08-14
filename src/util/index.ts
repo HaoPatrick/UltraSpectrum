@@ -66,9 +66,9 @@ export function spec2xyz(spec: ISpecValue): XYZ {
 export function numers2spec(
   numbers: number[],
   name = "unamed",
+  type: string = "untyped",
   start = 400,
-  resolution = 5,
-  type: string = "untyped"
+  resolution = 5
 ): ISpecValue {
   const maxValue = Math.max(...numbers);
   const scaledValues = numbers.map(item => item / maxValue);

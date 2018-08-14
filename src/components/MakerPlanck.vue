@@ -1,30 +1,25 @@
 <template>
+  <div>
     <div>
-        <div>
-            <span>Color Temperature:
-            </span>
-            <el-input-number @change="computePlankian" v-model="temp" :step="500" :min="1500"></el-input-number>
-        </div>
-        <div v-if="loading===false" style="display:flex;">
-            <SpecGraph :id="'parsed'" :spec="spectrum"></SpecGraph>
-            <ColorBlock :color="rgb"></ColorBlock>
-        </div>
+      <span>Color Temperature:
+      </span>
+      <el-input-number @change="computePlankian" v-model="temp" :step="500" :min="1500"></el-input-number>
     </div>
+    <DetailedGraph v-if="loading===false" :spectrum="spectrum"></DetailedGraph>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { spectrumAtTemp } from "../util/PlanckianLocus";
-import SpecGraph from "../components/SpecGraph.vue";
-import ColorBlock from "../components/ColorBlock.vue";
 import { numers2spec, ISpecValue } from "../util";
 import * as utilLib from "../util";
 import { RGB } from "@/util/ColorSpace";
+import DetailedGraph from "@/components/DetailedGraph.vue";
 
 @Component({
   components: {
-    SpecGraph,
-    ColorBlock
+    DetailedGraph
   }
 })
 export default class MakerPlanck extends Vue {
@@ -37,10 +32,11 @@ export default class MakerPlanck extends Vue {
   }
   private computePlankian() {
     const values = spectrumAtTemp(this.temp);
-    this.spectrum = numers2spec(values, `Planckian-${this.temp}K`);
-    const xyz = utilLib.spec2xyz(this.spectrum);
-    const xyzNormed = xyz.norm();
-    this.rgb = xyzNormed.toRGB();
+    this.spectrum = numers2spec(
+      values,
+      `Planckian-${this.temp}K`,
+      "ILLUMINANT"
+    );
     this.loading = false;
   }
 }
