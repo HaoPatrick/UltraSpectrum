@@ -1,13 +1,15 @@
 <template>
   <div id="app">
-    <el-menu style="margin-bottom:1em;" :router="true" default-active="/" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+    <el-menu style="margin-bottom:1em;" :router="true" :default-active="activeIndex" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
       <!-- <el-menu-item index="/">Ultra Spectrum</el-menu-item> -->
       <li style="color: rgb(255, 255, 255); border-bottom-color: transparent; background-color: rgb(84, 92, 100);" class="el-menu-item">🌈 Ultra Spectrum 🌈</li>
       <el-menu-item index="/">Home</el-menu-item>
       <el-menu-item index="/rgb">RGB to Spectrum</el-menu-item>
       <el-menu-item index="/maker">Spectrum Maker</el-menu-item>
     </el-menu>
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -15,7 +17,9 @@
 import { Component, Vue } from "vue-property-decorator";
 
 export default class App extends Vue {
-  private activeIndex: string = "2";
+  private get activeIndex(): string {
+    return this.$route.path;
+  }
 }
 </script>
 <style>
