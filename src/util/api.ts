@@ -1,4 +1,5 @@
-import { Irgb, ISpecName, ISpecValue } from "./index";
+import { ISpecName, ISpecValue } from "./index";
+import { RGB } from "@/util/ColorSpace";
 
 const API_ENDPOINT = "https://ultraspectrum.azurewebsites.net/api";
 
@@ -14,7 +15,7 @@ export async function getAllNames(): Promise<string[]> {
   return jsonResponse;
 }
 
-export async function findRGBMatch(rgb: Irgb): Promise<ISpecValue> {
+export async function findRGBMatch(rgb: RGB): Promise<ISpecValue> {
   const result = await fetch(
     `${API_ENDPOINT}/RGB2Spectrum?r=${rgb.r}&g=${rgb.g}&b=${rgb.b}`
   );

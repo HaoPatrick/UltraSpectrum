@@ -1,8 +1,11 @@
 <template>
   <div>
-    <el-input type="textarea" :rows="10" placeholder="Please input" v-model="userInput">
-    </el-input>
+    <div>
+      <el-input type="textarea" :rows="10" placeholder="Please input" v-model="userInput">
+      </el-input>
+    </div>
     <el-button @click="parseInput">Parse</el-button>
+    <el-button @click="downloadSpec">Download</el-button>
     <div v-if="loading===false" style="display:flex;">
       <SpecGraph :id="'parsed'" :spec="parsedSpec"></SpecGraph>
       <ColorBlock :color="rgb"></ColorBlock>
@@ -42,6 +45,23 @@ export default class SpecMaker extends Vue {
     const xyzNormed = xyz.norm();
     this.rgb = xyzNormed.toRGB();
     this.loading = false;
+  }
+  private downloadSpec() {
+    if (this.loading === true) {
+      this.$message("spectrum not loaded");
+      return;
+    }
+    const element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:application/json;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(this.parsedSpec))
+    );
+    element.setAttribute("download", `${this.parsedSpec.name}.json`);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   }
 }
 </script>
