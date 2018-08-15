@@ -2,7 +2,7 @@
     <div>
         <div>
             <span>Color Temperature</span>
-            <el-input-number @change="computeDSeries" v-model="temp" :step="500" :min="4000"></el-input-number>
+            <el-input-number @change="computeDSeries" v-model="temp" :step="500" :min="4000" :max="25000"></el-input-number>
         </div>
         <DetailedGraph v-if="loading===false" :spectrum="spectrum"></DetailedGraph>
     </div>
