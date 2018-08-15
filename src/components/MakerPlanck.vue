@@ -12,7 +12,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { spectrumAtTemp } from "../util/PlanckianLocus";
-import { numers2spec, ISpecValue } from "../util";
+import { numbers2spec, ISpecValue } from "../util";
 import * as utilLib from "../util";
 import { RGB } from "@/util/ColorSpace";
 import DetailedGraph from "@/components/DetailedGraph.vue";
@@ -26,13 +26,12 @@ export default class MakerPlanck extends Vue {
   private temp: number = 3000;
   private loading: boolean = true;
   private spectrum: ISpecValue = {} as ISpecValue;
-  private rgb: RGB = new RGB(0, 0, 0);
   private mounted() {
     this.computePlankian();
   }
   private computePlankian() {
     const values = spectrumAtTemp(this.temp);
-    this.spectrum = numers2spec(
+    this.spectrum = numbers2spec(
       values,
       `Planckian-${this.temp}K`,
       "ILLUMINANT"

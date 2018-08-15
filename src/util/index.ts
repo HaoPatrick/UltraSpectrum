@@ -63,7 +63,7 @@ export function spec2xyz(spec: ISpecValue): XYZ {
   return new XYZ(xSum, ySum, zSum);
 }
 
-export function numers2spec(
+export function numbers2spec(
   numbers: number[],
   name = "unamed",
   type: string = "untyped",

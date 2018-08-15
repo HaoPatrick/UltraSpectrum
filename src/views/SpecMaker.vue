@@ -6,6 +6,9 @@
     <el-tab-pane label="Planckian Locus">
       <MakerPlanck></MakerPlanck>
     </el-tab-pane>
+    <el-tab-pane label="D Series">
+      <MakerDSeries></MakerDSeries>
+    </el-tab-pane>
   </el-tabs>
 
 </template>
@@ -14,11 +17,13 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import MakerMannual from "../components/MakerMannual.vue";
 import MakerPlanck from "../components/MakerPlanck.vue";
+import MakerDSeries from "../components/MakerDSeries.vue";
 
 @Component({
   components: {
     MakerMannual,
-    MakerPlanck
+    MakerPlanck,
+    MakerDSeries
   }
 })
 export default class SpecMaker extends Vue {}

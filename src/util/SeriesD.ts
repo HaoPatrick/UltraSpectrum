@@ -1,5 +1,5 @@
 import zip from "lodash/zip";
-import { isUndefined } from "util";
+import { numbers2spec, ISpecValue } from "./index";
 interface IDSeriesSPD {
   S0: number[];
   S1: number[];
@@ -37,7 +37,7 @@ function getXdYdFromTemp(temp: number): { [name: string]: number } | null {
   };
 }
 
-const dSPD = (temp: number) => {
+const dSPD = (temp: number): number[] | null => {
   const param = getXdYdFromTemp(temp);
   if (param === null) {
     return null;
@@ -48,4 +48,13 @@ const dSPD = (temp: number) => {
     return citem[0] + param.M1 * citem[1] + param.M2 * citem[2];
   });
   return rv;
+};
+
+export const getDSeries = (T: number): ISpecValue | null => {
+  const values = dSPD(T);
+  if (values === null) {
+    return null;
+  }
+  const spec = numbers2spec(values, `D${Math.round(T / 100)}`, "ILLUMINANT");
+  return spec;
 };

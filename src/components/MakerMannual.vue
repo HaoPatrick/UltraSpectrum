@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { numers2spec, ISpecValue } from "../util";
+import { numbers2spec, ISpecValue } from "../util";
 import * as utilLib from "../util";
 import { RGB } from "@/util/ColorSpace";
 import DetailedGraph from "@/components/DetailedGraph.vue";
@@ -32,7 +32,7 @@ export default class MakerMannual extends Vue {
       .split(/[\s,;\n]/)
       .filter(item => item)
       .map(item => parseFloat(item));
-    const spectrum = numers2spec(values);
+    const spectrum = numbers2spec(values);
     this.parsedSpec = spectrum;
     this.loading = false;
   }
