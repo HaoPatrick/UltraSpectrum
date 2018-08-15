@@ -9,6 +9,7 @@
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "no-any": true,
     "allowJs": true,
     "experimentalDecorators": true,
     "baseUrl": ".",
