@@ -16,6 +16,16 @@ export interface ISpecValue {
   xyz_d65?: [number, number, number];
 }
 export class RGB {
+  public static isValid(rgb: RGB) {
+    return (
+      rgb.r >= 0 &&
+      rgb.r <= 1 &&
+      rgb.g >= 0 &&
+      rgb.g <= 1 &&
+      rgb.b >= 0 &&
+      rgb.b <= 1
+    );
+  }
   public r: number;
   public g: number;
   public b: number;

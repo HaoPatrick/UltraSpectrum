@@ -29,7 +29,6 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import * as api from "../util/api";
 import { RGB, XYZ, ISpecValue, Spectrum } from "../util/ColorSpace";
-import * as util from "../util";
 import { TruncateOptions } from "lodash";
 import DetailedGraph from "@/components/DetailedGraph.vue";
 import ColorBlock from "../components/ColorBlock.vue";

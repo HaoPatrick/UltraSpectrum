@@ -11,8 +11,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-
-import * as utilLib from "../util";
 import { RGB, Spectrum, ISpecValue } from "@/util/ColorSpace";
 import DetailedGraph from "@/components/DetailedGraph.vue";
 

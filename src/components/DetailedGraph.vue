@@ -13,7 +13,6 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import SpecGraph from "../components/SpecGraph.vue";
 import ColorBlock from "../components/ColorBlock.vue";
 import { RGB } from "../util/ColorSpace";
-import * as utilLib from "../util";
 import { Spectrum } from "../util/ColorSpace";
 
 @Component({
