@@ -1,4 +1,4 @@
-import { colorMatch } from "./colorData";
+import { colorMatch } from "./ColorData";
 import { XYZ, RGB } from "./ColorSpace";
 export interface ISpecValue {
   name: string;
@@ -8,7 +8,8 @@ export interface ISpecValue {
   end_nm: number;
   resolution: number;
   data: number[];
-  rgb_d65: number[];
+  rgb_d65?: [number, number, number];
+  xyz_d65?: [number, number, number];
 }
 
 export interface ISpecName {
@@ -51,37 +52,4 @@ export function lightMax(spec: ISpecValue): number {
   const yData = arrayMulti(spec.data, colorMatch.y.data);
   const ySum = yData.filter(item => item).reduce((a, b) => a + b);
   return ySum;
-}
-
-export function spec2xyz(spec: ISpecValue): XYZ {
-  const xData = arrayMulti(spec.data, colorMatch.x.data);
-  const yData = arrayMulti(spec.data, colorMatch.y.data);
-  const zData = arrayMulti(spec.data, colorMatch.z.data);
-  const xSum = xData.filter(item => item).reduce((a, b) => a + b);
-  const ySum = yData.filter(item => item).reduce((a, b) => a + b);
-  const zSum = zData.filter(item => item).reduce((a, b) => a + b);
-  return new XYZ(xSum, ySum, zSum);
-}
-
-export function numbers2spec(
-  numbers: number[],
-  name = "unamed",
-  type: string = "untyped",
-  start = 400,
-  resolution = 5
-): ISpecValue {
-  const maxValue = Math.max(...numbers);
-  const scaledValues = numbers.map(item => item / maxValue);
-  const end = start + resolution * numbers.length;
-  const spectrum: ISpecValue = {
-    name,
-    type,
-    type_max: 1,
-    start_nm: start,
-    end_nm: end,
-    resolution,
-    data: scaledValues,
-    rgb_d65: []
-  };
-  return spectrum;
 }

@@ -17,9 +17,6 @@
       <SpecGraph v-if="selectComputed.name!==''" :id="'computed'" :spec='selectComputed'></SpecGraph>
     </div>
     <div v-if="loading===false">
-      <div style="width:30%;margin:auto;">
-        <el-slider @change="updateRGB" :min="(rawXYZ.x+rawXYZ.y+rawXYZ.z)/5" :max="(rawXYZ.x+rawXYZ.y+rawXYZ.z)*5" v-model="xyzScaleRatio"></el-slider>
-      </div>
       <div>
         <ColorBlock :color="computedRGB"></ColorBlock>
       </div>
@@ -34,9 +31,9 @@ import ColorBlock from "../components/ColorBlock.vue";
 import { arrayMulti, ISpecValue } from "../util";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "../util";
-import * as colorData from "../util/colorData";
+import * as colorData from "../util/ColorData";
 import * as api from "../util/api";
-import { RGB, XYZ } from "../util/ColorSpace";
+import { RGB, XYZ, Spectrum } from "../util/ColorSpace";
 
 @Component({
   components: {
@@ -45,37 +42,30 @@ import { RGB, XYZ } from "../util/ColorSpace";
   }
 })
 export default class App extends Vue {
-  protected selectedLight: ISpecValue = Object.values(colorData.lights)[0];
-  protected selectedReflectance: ISpecValue = {} as ISpecValue;
-  protected selectComputed: ISpecValue = {} as ISpecValue;
-  private lights: ISpecValue[] = Object.values(colorData.lights);
+  protected selectedLight: Spectrum = Object.values(colorData.lights)[0];
+  protected selectedReflectance: Spectrum = colorData.reflectance[0];
+  protected selectComputed!: Spectrum;
+  private lights: Spectrum[] = Object.values(colorData.lights);
   private reflectance: string[] = [];
-  private colorMatch: {
-    x: ISpecValue;
-    y: ISpecValue;
-    z: ISpecValue;
-  } = colorData.colorMatch;
   private computedRGB = new RGB(0, 0, 0);
   private rawXYZ = new XYZ(0, 0, 0);
-  private scaledXYZ = new XYZ(0, 0, 0);
   private elSelectLight: number = 0;
   private elSelectRef: number = 0;
   private xyzScaleRatio: number = 1;
   private inputSpectrum: string = "";
   private util = utilLib;
-  private lightMaxN: number = 20;
   private loading: boolean = false;
 
   public async updateReflectance(val: number) {
     this.loading = true;
     const seleted = this.reflectance[val];
-    this.selectedReflectance = await api.getSpecByName(seleted);
+    const reflectanceGot = await api.getSpecByName(seleted);
+    this.selectedReflectance = new Spectrum(reflectanceGot);
     this.updateChange();
     this.loading = false;
   }
   public updateLight(val: number) {
     this.selectedLight = this.lights[val];
-    this.lightMaxN = utilLib.lightMax(this.selectedLight);
     this.updateChange();
   }
   public updateChange() {
@@ -83,56 +73,16 @@ export default class App extends Vue {
       this.selectedLight.data,
       this.selectedReflectance.data
     );
-    const testXYZ = {
-      x: arrayMulti(this.selectedLight.data, this.colorMatch.x.data)
-        .filter(item => item)
-        .reduce((a, b) => a + b),
-      y: arrayMulti(this.selectedLight.data, this.colorMatch.y.data)
-        .filter(item => item)
-        .reduce((a, b) => a + b),
-      z: arrayMulti(this.selectedLight.data, this.colorMatch.z.data)
-        .filter(item => item)
-        .reduce((a, b) => a + b)
-    };
-    // tslint:disable-next-line:no-console
-    console.log("light xyz:", testXYZ);
-    const example = this.selectedLight;
-    const result: ISpecValue = {
-      name: "computed",
-      type: "computed",
-      type_max: example.type_max * this.selectComputed.type_max,
-      start_nm: example.start_nm,
-      end_nm: example.end_nm,
-      resolution: example.resolution,
-      data: computedData,
-      rgb_d65: []
-    };
+    const result: Spectrum = Spectrum.makeFromValue(computedData, "computed");
     this.selectComputed = result;
-    const xyz = utilLib.spec2xyz(result);
+    const xyz = result.toXYZ();
     this.rawXYZ = xyz;
-    this.xyzScaleRatio = this.lightMaxN;
-    const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
-    this.computedRGB = rgb;
-  }
-  public updateRGB() {
-    const rgb = this.xyz2rgb(this.rawXYZ, this.xyzScaleRatio);
-    this.computedRGB = rgb;
-  }
-  public xyz2rgb(xyz: XYZ, xyzScale: number): RGB {
-    const scaled = new XYZ(
-      xyz.x / xyzScale,
-      xyz.y / xyzScale,
-      xyz.z / xyzScale
-    );
-    this.scaledXYZ = scaled;
-    return scaled.toRGB();
+    this.computedRGB = xyz.toRGB();
   }
 
   private async created() {
     this.loading = true;
     this.selectedLight = this.lights[0];
-    this.lightMaxN = utilLib.lightMax(this.selectedLight);
-    this.selectedReflectance = colorData.reflectance[0];
     this.reflectance = await api.getAllNames();
     await this.updateReflectance(0);
 

@@ -1,11 +1,11 @@
 <template>
+  <div>
     <div>
-        <div>
-            <span>Color Temperature</span>
-            <el-input-number @change="computeDSeries" v-model="temp" :step="500" :min="4000" :max="25000"></el-input-number>
-        </div>
-        <DetailedGraph v-if="loading===false" :spectrum="spectrum"></DetailedGraph>
+      <span>Color Temperature</span>
+      <el-input-number @change="computeDSeries" v-model="temp" :step="500" :min="4000" :max="25000"></el-input-number>
     </div>
+    <DetailedGraph v-if="loading===false" :spectrum="spectrum"></DetailedGraph>
+  </div>
 </template>
 
 <script lang="ts">
@@ -14,6 +14,7 @@ import DetailedGraph from "@/components/DetailedGraph.vue";
 import { ISpecValue } from "@/util";
 import { getDSeries } from "@/util/SeriesD";
 import { Loading } from "element-ui";
+import { Spectrum } from "@/util/ColorSpace";
 
 @Component({
   components: {
@@ -23,7 +24,7 @@ import { Loading } from "element-ui";
 export default class MakerDSeries extends Vue {
   private temp: number = 5000;
   private loading: boolean = true;
-  private spectrum: ISpecValue = {} as ISpecValue;
+  private spectrum: Spectrum = {} as Spectrum;
   private mounted() {
     this.computeDSeries();
   }

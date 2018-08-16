@@ -1,5 +1,10 @@
-import { gammaCorrection, gammaCorrectionRev } from "./index";
-
+import {
+  gammaCorrection,
+  gammaCorrectionRev,
+  arrayMulti,
+  ISpecValue
+} from "./index";
+import { colorMatch, lights } from "./ColorData";
 export class RGB {
   public r: number;
   public g: number;
@@ -11,6 +16,10 @@ export class RGB {
   }
   public sum(): number {
     return this.r + this.g + this.b;
+  }
+
+  public toNumbers(): [number, number, number] {
+    return [this.r, this.g, this.b];
   }
 
   public toXYZ(): XYZ {
@@ -46,5 +55,94 @@ export class XYZ {
   public norm(): XYZ {
     const sumValue = this.sum();
     return new XYZ(this.x / sumValue, this.y / sumValue, this.z / sumValue);
+  }
+
+  public toNumbers(): [number, number, number] {
+    return [this.x, this.y, this.z];
+  }
+}
+
+export enum SPECTYPE {
+  Reflectance = "REFLECTANCE",
+  Illuminant = "ILLUMINANT"
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class Spectrum {
+  public static spec2xyz(spec: number[]): XYZ {
+    const x = arrayMulti(spec, colorMatch.x.data);
+    const y = arrayMulti(spec, colorMatch.y.data);
+    const z = arrayMulti(spec, colorMatch.z.data);
+    const xSum = x.filter(item => item).reduce((a, b) => a + b, 0);
+    const ySum = y.filter(item => item).reduce((a, b) => a + b, 0);
+    const zSum = z.filter(item => item).reduce((a, b) => a + b, 0);
+    return new XYZ(xSum, ySum, zSum);
+  }
+  public static makeFromValue(
+    values: number[],
+    name: string,
+    type: SPECTYPE = SPECTYPE.Reflectance,
+    start: number = 400,
+    resolution: number = 5
+  ): Spectrum {
+    const maxValue = Math.max(...values);
+    const scaledValues = values.map(item => item / maxValue);
+    const end = values.length * resolution + start;
+
+    let xyzD65: [number, number, number];
+    let rgbD65: [number, number, number];
+    if (type === SPECTYPE.Reflectance) {
+      const underD65 = arrayMulti(scaledValues, lights.d65.data);
+      const xyz = Spectrum.spec2xyz(underD65);
+      xyzD65 = xyz.toNumbers();
+      rgbD65 = xyz.toRGB().toNumbers();
+    } else {
+      rgbD65 = [0, 0, 0];
+      xyzD65 = [0, 0, 0];
+    }
+    const spec: ISpecValue = {
+      name,
+      data: scaledValues,
+      type,
+      type_max: 1,
+      start_nm: start,
+      end_nm: end,
+      resolution,
+      rgb_d65: rgbD65,
+      xyz_d65: xyzD65
+    };
+    return new Spectrum(spec);
+  }
+
+  public data: number[];
+  public start: number;
+  public end: number;
+  public resolution: number;
+  public type: SPECTYPE;
+  public typeMax: number = 1;
+  public rgbD65: RGB | null | undefined;
+  public xyzD65: XYZ | null | undefined;
+  public name: string;
+
+  public constructor(spec: ISpecValue) {
+    this.name = spec.name;
+    this.data = spec.data;
+    this.start = spec.start_nm;
+    this.end = spec.end_nm;
+    this.resolution = spec.resolution;
+    this.type = spec.type as SPECTYPE;
+    this.typeMax = spec.type_max;
+
+    if (spec.rgb_d65 !== undefined && spec.xyz_d65 !== undefined) {
+      this.rgbD65 = new RGB(spec.rgb_d65[0], spec.rgb_d65[1], spec.rgb_d65[2]);
+      this.xyzD65 = new XYZ(spec.xyz_d65[0], spec.xyz_d65[1], spec.xyz_d65[2]);
+    } else {
+      this.rgbD65 = null;
+      this.xyzD65 = null;
+    }
+  }
+
+  public toXYZ(): XYZ {
+    return Spectrum.spec2xyz(this.data);
   }
 }

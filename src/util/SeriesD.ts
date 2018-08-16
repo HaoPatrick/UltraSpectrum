@@ -1,5 +1,6 @@
 import zip from "lodash/zip";
-import { numbers2spec, ISpecValue } from "./index";
+import { ISpecValue } from "./index";
+import { Spectrum, SPECTYPE } from "@/util/ColorSpace";
 interface IDSeriesSPD {
   S0: number[];
   S1: number[];
@@ -50,11 +51,15 @@ const dSPD = (temp: number): number[] | null => {
   return rv;
 };
 
-export const getDSeries = (T: number): ISpecValue | null => {
+export const getDSeries = (T: number): Spectrum | null => {
   const values = dSPD(T);
   if (values === null) {
     return null;
   }
-  const spec = numbers2spec(values, `D${Math.round(T / 100)}`, "ILLUMINANT");
+  const spec = Spectrum.makeFromValue(
+    values,
+    `D${Math.round(T / 100)}`,
+    SPECTYPE.Illuminant
+  );
   return spec;
 };

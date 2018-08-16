@@ -8,10 +8,11 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import * as echarts from "echarts";
 import range from "lodash/range";
+import { Spectrum } from "../util/ColorSpace";
 
 @Component
 export default class SpecGraph extends Vue {
-  @Prop() private spec!: any;
+  @Prop() private spec!: Spectrum;
   private id: string = Math.random()
     .toString(36)
     .substr(2, 7);
@@ -23,11 +24,11 @@ export default class SpecGraph extends Vue {
     this.chart.setOption(this.generateOptions(this.spec));
   }
   @Watch("spec")
-  private onSpecChanged(newSpec: any) {
+  private onSpecChanged(newSpec: Spectrum) {
     const option = this.generateOptions(newSpec);
     this.chart.setOption(option);
   }
-  private generateOptions(newSpec: any) {
+  private generateOptions(newSpec: Spectrum) {
     const option = {
       title: {
         text: newSpec.name
@@ -41,7 +42,7 @@ export default class SpecGraph extends Vue {
       xAxis: {
         type: "category",
         name: "nm",
-        data: range(newSpec.start_nm, newSpec.end_nm, newSpec.resolution)
+        data: range(newSpec.start, newSpec.end, newSpec.resolution)
       },
       yAxis: {
         type: "value"

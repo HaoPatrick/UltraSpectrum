@@ -14,6 +14,7 @@ import SpecGraph from "../components/SpecGraph.vue";
 import ColorBlock from "../components/ColorBlock.vue";
 import { RGB } from "../util/ColorSpace";
 import * as utilLib from "../util";
+import { Spectrum } from "../util/ColorSpace";
 
 @Component({
   components: {
@@ -22,9 +23,9 @@ import * as utilLib from "../util";
   }
 })
 export default class DetailedGraph extends Vue {
-  @Prop() private spectrum!: utilLib.ISpecValue;
+  @Prop() private spectrum!: Spectrum;
   private get rgb() {
-    const xyz = utilLib.spec2xyz(this.spectrum);
+    const xyz = this.spectrum.toXYZ();
     const xyzNormed = xyz.norm();
     return xyzNormed.toRGB();
   }

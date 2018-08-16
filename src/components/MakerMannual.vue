@@ -11,9 +11,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { numbers2spec, ISpecValue } from "../util";
+import { ISpecValue } from "../util";
 import * as utilLib from "../util";
-import { RGB } from "@/util/ColorSpace";
+import { RGB, Spectrum } from "@/util/ColorSpace";
 import DetailedGraph from "@/components/DetailedGraph.vue";
 
 @Component({
@@ -24,7 +24,7 @@ import DetailedGraph from "@/components/DetailedGraph.vue";
 export default class MakerMannual extends Vue {
   private userInput: string = "";
   private parsedInput: number[] = [];
-  private parsedSpec: ISpecValue = {} as ISpecValue;
+  private parsedSpec: Spectrum = {} as Spectrum;
   private loading: boolean = true;
   private rgb: RGB = new RGB(0, 0, 0);
   private parseInput() {
@@ -32,7 +32,7 @@ export default class MakerMannual extends Vue {
       .split(/[\s,;\n]/)
       .filter(item => item)
       .map(item => parseFloat(item));
-    const spectrum = numbers2spec(values);
+    const spectrum = Spectrum.makeFromValue(values, "UserInput");
     this.parsedSpec = spectrum;
     this.loading = false;
   }
