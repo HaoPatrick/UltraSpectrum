@@ -4,7 +4,7 @@
       <span>Color Temperature:
       </span>
       <el-input-number @change="computePlankian" v-model="temp" :step="500" :min="1500"></el-input-number>
-      <el-button @click="generateAll">Generate All</el-button>
+      <el-button style="margin-left:1em;" @click="generateAll">Generate All</el-button>
     </div>
     <DetailedGraph v-if="loading===false" :spectrum="spectrum"></DetailedGraph>
   </div>

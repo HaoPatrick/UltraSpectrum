@@ -1,8 +1,9 @@
 <template>
   <div>
     <div>
-      <span>Color Temperature</span>
+      <span>Color Temperature: </span>
       <el-input-number @change="computeDSeries" v-model="temp" :step="500" :min="4000" :max="25000"></el-input-number>
+      <el-button @click="generateAll" style="margin-left:1em;">Generate All</el-button>
     </div>
     <DetailedGraph v-if="loading===false" :spectrum="spectrum"></DetailedGraph>
   </div>
@@ -14,6 +15,8 @@ import DetailedGraph from "@/components/DetailedGraph.vue";
 import { getDSeries } from "@/util/SeriesD";
 import { Loading } from "element-ui";
 import { Spectrum, ISpecValue } from "@/util/ColorSpace";
+import range from "lodash/range";
+import { downloadJson } from "@/util";
 
 @Component({
   components: {
@@ -35,6 +38,11 @@ export default class MakerDSeries extends Vue {
     }
     this.spectrum = spec;
     this.loading = false;
+  }
+  private generateAll() {
+    const tempRange = range(4000, 15000, 500);
+    const spec = tempRange.map(val => getDSeries(val));
+    downloadJson(JSON.stringify(spec), "DSeriesAll");
   }
 }
 </script>
