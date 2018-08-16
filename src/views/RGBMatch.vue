@@ -28,7 +28,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import * as api from "../util/api";
-import { RGB, XYZ, ISpecValue } from "../util/ColorSpace";
+import { RGB, XYZ, ISpecValue, Spectrum } from "../util/ColorSpace";
 import * as util from "../util";
 import { TruncateOptions } from "lodash";
 import DetailedGraph from "@/components/DetailedGraph.vue";
@@ -44,7 +44,7 @@ export default class RGBMatch extends Vue {
   private numR: number = 0.65;
   private numG: number = 0.2;
   private numB: number = 0.35;
-  private bestMatch: ISpecValue = {} as ISpecValue;
+  private bestMatch: Spectrum = {} as Spectrum;
   private specReady: boolean = false;
   private pickerColor: string = "";
 

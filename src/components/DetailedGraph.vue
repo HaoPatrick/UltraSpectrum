@@ -1,5 +1,5 @@
 <template>
-  <div style="display:flex;">
+  <div class="container">
     <SpecGraph :spec="spectrum"></SpecGraph>
     <div style="display:flex;flex-direction:column;">
       <ColorBlock :color="rgb"></ColorBlock>
@@ -47,4 +47,10 @@ export default class DetailedGraph extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container {
+  display: flex;
+  border: 2px solid rgb(255, 208, 75);
+  padding: 1em 1em 1em 1em;
+  background-color: rgba(255, 255, 255, 0.2);
+}
 </style>

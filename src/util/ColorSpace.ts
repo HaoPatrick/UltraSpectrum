@@ -155,4 +155,7 @@ export class Spectrum {
   public toXYZ(): XYZ {
     return Spectrum.spec2xyz(this.data);
   }
+  public toRGB(): RGB {
+    return this.toXYZ().toRGB();
+  }
 }
