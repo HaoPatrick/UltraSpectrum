@@ -30,7 +30,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { RGB, XYZ } from "../util/ColorSpace";
-import { colorMatch } from "@/util/colorData";
+import { colorMatch } from "@/util/ColorData";
 import { install } from "element-ui";
 
 @Component({

@@ -11,7 +11,7 @@
         <el-option v-for="(item,index) in reflectance" :key="item" :label="item" :value="index"></el-option>
       </el-select>
     </div>
-    <div class="graph-column">
+    <div v-if="loading===false" class="graph-column">
       <SpecGraph v-if="selectedLight.name!==''" :id="'light'" :spec='selectedLight'></SpecGraph>
       <SpecGraph v-if="selectedReflectance.name!==''" :id="'reflectance'" :spec='selectedReflectance'></SpecGraph>
       <SpecGraph v-if="selectComputed.name!==''" :id="'computed'" :spec='selectComputed'></SpecGraph>
@@ -28,12 +28,12 @@
 import { Component, Vue } from "vue-property-decorator";
 import SpecGraph from "../components/SpecGraph.vue";
 import ColorBlock from "../components/ColorBlock.vue";
-import { arrayMulti, ISpecValue } from "../util";
+import { arrayMulti } from "../util/ColorMath";
 import { Breadcrumb } from "element-ui";
 import * as utilLib from "../util";
 import * as colorData from "../util/ColorData";
 import * as api from "../util/api";
-import { RGB, XYZ, Spectrum } from "../util/ColorSpace";
+import { RGB, XYZ, Spectrum, ISpecValue } from "../util/ColorSpace";
 
 @Component({
   components: {

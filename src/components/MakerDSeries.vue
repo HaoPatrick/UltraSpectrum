@@ -11,10 +11,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import DetailedGraph from "@/components/DetailedGraph.vue";
-import { ISpecValue } from "@/util";
 import { getDSeries } from "@/util/SeriesD";
 import { Loading } from "element-ui";
-import { Spectrum } from "@/util/ColorSpace";
+import { Spectrum, ISpecValue } from "@/util/ColorSpace";
 
 @Component({
   components: {

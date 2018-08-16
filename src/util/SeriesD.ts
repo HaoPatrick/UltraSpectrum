@@ -1,5 +1,5 @@
 import zip from "lodash/zip";
-import { ISpecValue } from "./index";
+import { ISpecValue } from "./ColorSpace";
 import { Spectrum, SPECTYPE } from "@/util/ColorSpace";
 interface IDSeriesSPD {
   S0: number[];

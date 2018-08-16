@@ -1,13 +1,18 @@
-import { ISpecValue } from "./index";
-import { Spectrum } from "@/util/ColorSpace";
+import { Spectrum, ISpecValue } from "./ColorSpace";
+
+import d50 from "../assets/spec_lights/d50.json";
+import d65 from "../assets/spec_lights/d65.json";
+import illA from "../assets/spec_lights/illA.json";
+import illF from "../assets/spec_lights/illF.json";
+import illC from "../assets/spec_lights/illC.json";
 
 const lights: { [name: string]: Spectrum } = {
   // tslint:disable:no-var-requires
-  d50: new Spectrum(require("../assets/spec_lights/d50.json") as ISpecValue),
-  d65: new Spectrum(require("../assets/spec_lights/d65.json") as ISpecValue),
-  illA: new Spectrum(require("../assets/spec_lights/illA.json") as ISpecValue),
-  illC: new Spectrum(require("../assets/spec_lights/illC.json") as ISpecValue),
-  illF: new Spectrum(require("../assets/spec_lights/illF.json") as ISpecValue)
+  d50: new Spectrum(d50 as ISpecValue),
+  d65: new Spectrum(d65 as ISpecValue),
+  illA: new Spectrum(illA as ISpecValue),
+  illC: new Spectrum(illC as ISpecValue),
+  illF: new Spectrum(illF as ISpecValue)
 };
 const reflectance: Spectrum[] = [
   ...require("../assets/spec_reflectance/natural.json")

@@ -1,5 +1,5 @@
-import { ISpecName, ISpecValue } from "./index";
-import { RGB } from "@/util/ColorSpace";
+import { ISpecName } from "./index";
+import { RGB, ISpecValue } from "@/util/ColorSpace";
 
 const API_ENDPOINT = "https://ultraspectrum.azurewebsites.net/api";
 

@@ -1,10 +1,20 @@
-import {
-  gammaCorrection,
-  gammaCorrectionRev,
-  arrayMulti,
-  ISpecValue
-} from "./index";
-import { colorMatch, lights } from "./ColorData";
+import { gammaCorrection, gammaCorrectionRev, arrayMulti } from "./ColorMath";
+import colorMatchX from "../assets/spec_color_match/x.json";
+import colorMatchY from "../assets/spec_color_match/y.json";
+import colorMatchZ from "../assets/spec_color_match/z.json";
+import d65 from "@/assets/spec_lights/d65.json";
+
+export interface ISpecValue {
+  name: string;
+  type: string;
+  type_max: number;
+  start_nm: number;
+  end_nm: number;
+  resolution: number;
+  data: number[];
+  rgb_d65?: [number, number, number];
+  xyz_d65?: [number, number, number];
+}
 export class RGB {
   public r: number;
   public g: number;
@@ -70,9 +80,9 @@ export enum SPECTYPE {
 // tslint:disable-next-line:max-classes-per-file
 export class Spectrum {
   public static spec2xyz(spec: number[]): XYZ {
-    const x = arrayMulti(spec, colorMatch.x.data);
-    const y = arrayMulti(spec, colorMatch.y.data);
-    const z = arrayMulti(spec, colorMatch.z.data);
+    const x = arrayMulti(spec, colorMatchX.data);
+    const y = arrayMulti(spec, colorMatchY.data);
+    const z = arrayMulti(spec, colorMatchZ.data);
     const xSum = x.filter(item => item).reduce((a, b) => a + b, 0);
     const ySum = y.filter(item => item).reduce((a, b) => a + b, 0);
     const zSum = z.filter(item => item).reduce((a, b) => a + b, 0);
@@ -92,7 +102,7 @@ export class Spectrum {
     let xyzD65: [number, number, number];
     let rgbD65: [number, number, number];
     if (type === SPECTYPE.Reflectance) {
-      const underD65 = arrayMulti(scaledValues, lights.d65.data);
+      const underD65 = arrayMulti(scaledValues, d65.data);
       const xyz = Spectrum.spec2xyz(underD65);
       xyzD65 = xyz.toNumbers();
       rgbD65 = xyz.toRGB().toNumbers();

@@ -12,9 +12,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { spectrumAtTemp } from "../util/PlanckianLocus";
-import { ISpecValue } from "../util";
 import * as utilLib from "../util";
-import { RGB, Spectrum, SPECTYPE } from "@/util/ColorSpace";
+import { RGB, Spectrum, SPECTYPE, ISpecValue } from "@/util/ColorSpace";
 import DetailedGraph from "@/components/DetailedGraph.vue";
 
 @Component({
