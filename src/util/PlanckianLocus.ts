@@ -1,4 +1,5 @@
 import range from "lodash/range";
+import { Spectrum, SPECTYPE } from "./ColorSpace";
 
 const c1: number = 3.74177179e-16;
 const c2: number = 0.0143877736;
@@ -13,8 +14,13 @@ export function spectrumAtTemp(
   start: number = 400,
   end: number = 695,
   resolution: number = 5
-): number[] {
+): Spectrum {
   const plankianT = M(temp);
   const lambdas = range(start, end, resolution);
-  return lambdas.map(item => plankianT(item * Math.pow(10, -9)));
+  const values = lambdas.map(item => plankianT(item * Math.pow(10, -9)));
+  return Spectrum.makeFromValue(
+    values,
+    `Planckian-${temp}K`,
+    SPECTYPE.Illuminant
+  );
 }

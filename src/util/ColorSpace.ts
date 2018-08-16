@@ -41,6 +41,9 @@ export class RGB {
   public toNumbers(): [number, number, number] {
     return [this.r, this.g, this.b];
   }
+  public toJSON() {
+    return this.toNumbers();
+  }
 
   public toXYZ(): XYZ {
     const lr = gammaCorrectionRev(this.r);
@@ -76,7 +79,9 @@ export class XYZ {
     const sumValue = this.sum();
     return new XYZ(this.x / sumValue, this.y / sumValue, this.z / sumValue);
   }
-
+  public toJSON() {
+    return this.toNumbers();
+  }
   public toNumbers(): [number, number, number] {
     return [this.x, this.y, this.z];
   }
@@ -167,5 +172,19 @@ export class Spectrum {
   }
   public toRGB(): RGB {
     return this.toXYZ().toRGB();
+  }
+
+  public toJSON(): ISpecValue {
+    return {
+      name: this.name,
+      type: this.type.toString(),
+      type_max: this.typeMax,
+      start_nm: this.start,
+      end_nm: this.end,
+      resolution: this.resolution,
+      data: this.data,
+      rgb_d65: this.rgbD65 ? this.rgbD65.toNumbers() : undefined,
+      xyz_d65: this.xyzD65 ? this.xyzD65.toNumbers() : undefined
+    };
   }
 }

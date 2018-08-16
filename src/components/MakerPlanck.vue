@@ -4,6 +4,7 @@
       <span>Color Temperature:
       </span>
       <el-input-number @change="computePlankian" v-model="temp" :step="500" :min="1500"></el-input-number>
+      <el-button @click="generateAll">Generate All</el-button>
     </div>
     <DetailedGraph v-if="loading===false" :spectrum="spectrum"></DetailedGraph>
   </div>
@@ -14,6 +15,8 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { spectrumAtTemp } from "../util/PlanckianLocus";
 import { RGB, Spectrum, SPECTYPE, ISpecValue } from "@/util/ColorSpace";
 import DetailedGraph from "@/components/DetailedGraph.vue";
+import range from "lodash/range";
+import { downloadJson } from "@/util";
 
 @Component({
   components: {
@@ -28,13 +31,15 @@ export default class MakerPlanck extends Vue {
     this.computePlankian();
   }
   private computePlankian() {
-    const values = spectrumAtTemp(this.temp);
-    this.spectrum = Spectrum.makeFromValue(
-      values,
-      `Planckian-${this.temp}K`,
-      SPECTYPE.Illuminant
-    );
+    this.spectrum = spectrumAtTemp(this.temp);
     this.loading = false;
+  }
+  private generateAll() {
+    const tempRange = range(2000, 10000, 400);
+    const specs = tempRange.map(val => {
+      return spectrumAtTemp(val);
+    });
+    downloadJson(JSON.stringify(specs), "PlanckianLocusAll");
   }
 }
 </script>

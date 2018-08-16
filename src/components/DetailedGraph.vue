@@ -14,6 +14,7 @@ import SpecGraph from "../components/SpecGraph.vue";
 import ColorBlock from "../components/ColorBlock.vue";
 import { RGB } from "../util/ColorSpace";
 import { Spectrum } from "../util/ColorSpace";
+import { downloadJson } from "../util";
 
 @Component({
   components: {
@@ -29,17 +30,7 @@ export default class DetailedGraph extends Vue {
     return xyzNormed.toRGB();
   }
   private download() {
-    const element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:application/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(this.spectrum))
-    );
-    element.setAttribute("download", `${this.spectrum.name}.json`);
-    element.style.display = "none";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    downloadJson(JSON.stringify(this.spectrum), this.spectrum.name);
   }
 }
 </script>
