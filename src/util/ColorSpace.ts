@@ -12,8 +12,8 @@ export interface ISpecValue {
   end_nm: number;
   resolution: number;
   data: number[];
-  rgb_d65?: [number, number, number];
-  xyz_d65?: [number, number, number];
+  rgb?: [number, number, number];
+  xyz?: [number, number, number];
 }
 export class RGB {
   public static isValid(rgb: RGB) {
@@ -122,8 +122,9 @@ export class Spectrum {
       xyzD65 = xyz.toNumbers();
       rgbD65 = xyz.toRGB().toNumbers();
     } else {
-      rgbD65 = [0, 0, 0];
-      xyzD65 = [0, 0, 0];
+      const xyz = Spectrum.spec2xyz(scaledValues);
+      rgbD65 = xyz.toRGB().toNumbers();
+      xyzD65 = xyz.norm().toNumbers();
     }
     const spec: ISpecValue = {
       name,
@@ -133,8 +134,8 @@ export class Spectrum {
       start_nm: start,
       end_nm: end,
       resolution,
-      rgb_d65: rgbD65,
-      xyz_d65: xyzD65
+      rgb: rgbD65,
+      xyz: xyzD65
     };
     return new Spectrum(spec);
   }
@@ -145,8 +146,8 @@ export class Spectrum {
   public resolution: number;
   public type: SPECTYPE;
   public typeMax: number = 1;
-  public rgbD65: RGB | null | undefined;
-  public xyzD65: XYZ | null | undefined;
+  public rgb: RGB | null | undefined;
+  public xyz: XYZ | null | undefined;
   public name: string;
 
   public constructor(spec: ISpecValue) {
@@ -158,12 +159,12 @@ export class Spectrum {
     this.type = spec.type as SPECTYPE;
     this.typeMax = spec.type_max;
 
-    if (spec.rgb_d65 !== undefined && spec.xyz_d65 !== undefined) {
-      this.rgbD65 = new RGB(spec.rgb_d65[0], spec.rgb_d65[1], spec.rgb_d65[2]);
-      this.xyzD65 = new XYZ(spec.xyz_d65[0], spec.xyz_d65[1], spec.xyz_d65[2]);
+    if (spec.rgb !== undefined && spec.xyz !== undefined) {
+      this.rgb = new RGB(spec.rgb[0], spec.rgb[1], spec.rgb[2]);
+      this.xyz = new XYZ(spec.xyz[0], spec.xyz[1], spec.xyz[2]);
     } else {
-      this.rgbD65 = null;
-      this.xyzD65 = null;
+      this.rgb = null;
+      this.xyz = null;
     }
   }
 
@@ -183,8 +184,8 @@ export class Spectrum {
       end_nm: this.end,
       resolution: this.resolution,
       data: this.data,
-      rgb_d65: this.rgbD65 ? this.rgbD65.toNumbers() : undefined,
-      xyz_d65: this.xyzD65 ? this.xyzD65.toNumbers() : undefined
+      rgb: this.rgb ? this.rgb.toNumbers() : undefined,
+      xyz: this.xyz ? this.xyz.toNumbers() : undefined
     };
   }
 }
