@@ -2,7 +2,7 @@
   <div class="container">
     <SpecGraph :spec="spectrum"></SpecGraph>
     <div style="display:flex;flex-direction:column;">
-      <ColorBlock :color="rgb"></ColorBlock>
+      <ColorBlock :color="xyz"></ColorBlock>
       <el-button @click="download">Download Spectrum</el-button>
     </div>
   </div>
@@ -12,7 +12,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import SpecGraph from "../components/SpecGraph.vue";
 import ColorBlock from "../components/ColorBlock.vue";
-import { RGB } from "../util/ColorSpace";
+import { RGB, XYZ } from "../util/ColorSpace";
 import { Spectrum } from "../util/ColorSpace";
 import { downloadJson } from "../util";
 
@@ -24,10 +24,8 @@ import { downloadJson } from "../util";
 })
 export default class DetailedGraph extends Vue {
   @Prop() private spectrum!: Spectrum;
-  private get rgb() {
-    const xyz = this.spectrum.toXYZ();
-    const xyzNormed = xyz.norm();
-    return xyzNormed.toRGB();
+  private get xyz(): XYZ {
+    return this.spectrum.toXYZ();
   }
   private download() {
     downloadJson(JSON.stringify(this.spectrum), this.spectrum.name);

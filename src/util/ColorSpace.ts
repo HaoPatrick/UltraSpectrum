@@ -69,10 +69,14 @@ export class XYZ {
   public sum(): number {
     return this.x + this.y + this.z;
   }
+  /*
+  * when converting to RGB, the xyz value should be normed.
+  */
   public toRGB(): RGB {
-    const r = 3.2406 * this.x - 1.5372 * this.y - 0.4986 * this.z;
-    const g = -0.9689 * this.x + 1.8758 * this.y + 0.0415 * this.z;
-    const b = 0.0557 * this.x - 0.204 * this.y + 1.057 * this.z;
+    const xyz = this.norm();
+    const r = 3.2406 * xyz.x - 1.5372 * xyz.y - 0.4986 * xyz.z;
+    const g = -0.9689 * xyz.x + 1.8758 * xyz.y + 0.0415 * xyz.z;
+    const b = 0.0557 * xyz.x - 0.204 * xyz.y + 1.057 * xyz.z;
     return new RGB(gammaCorrection(r), gammaCorrection(g), gammaCorrection(b));
   }
   public norm(): XYZ {
@@ -111,26 +115,26 @@ export class Spectrum {
     resolution: number = 5
   ): Spectrum {
     const maxValue = Math.max(...values);
-    const scaledValues = values.map(item => item / maxValue);
-    const end = values.length * resolution + start;
+    const end = (values.length - 1) * resolution + start;
 
     let xyzD65: [number, number, number];
     let rgbD65: [number, number, number];
     if (type === SPECTYPE.Reflectance) {
-      const underD65 = arrayMulti(scaledValues, d65.data);
+      const underD65 = arrayMulti(values, d65.data);
       const xyz = Spectrum.spec2xyz(underD65);
       xyzD65 = xyz.toNumbers();
       rgbD65 = xyz.toRGB().toNumbers();
     } else {
-      const xyz = Spectrum.spec2xyz(scaledValues);
+      const xyz = Spectrum.spec2xyz(values);
       rgbD65 = xyz.toRGB().toNumbers();
-      xyzD65 = xyz.norm().toNumbers();
+      // THE XYZ value should never be normed as per specfication.
+      xyzD65 = xyz.toNumbers();
     }
     const spec: ISpecValue = {
       name,
-      data: scaledValues,
+      data: values,
       type,
-      type_max: 1,
+      type_max: maxValue,
       start_nm: start,
       end_nm: end,
       resolution,

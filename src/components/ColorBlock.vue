@@ -18,10 +18,16 @@
         <el-tag type="info" size="small">{{rgb.b*255|round}}</el-tag>
       </p>
       <p>
+        XYZ:
+        <el-tag type="info" size="small">{{xyz.x.toExponential(3)}}</el-tag>
+        <el-tag type="info" size="small">{{xyz.y.toExponential(3)}}</el-tag>
+        <el-tag type="info" size="small">{{xyz.z.toExponential(3)}}</el-tag>
+      </p>
+      <p>
         xyz:
-        <el-tag type="info" size="small">{{xyz.x|round3}}</el-tag>
-        <el-tag type="info" size="small">{{xyz.y|round3}}</el-tag>
-        <el-tag type="info" size="small">{{xyz.z|round3}}</el-tag>
+        <el-tag type="info" size="small">{{xyz.norm().x|round3}}</el-tag>
+        <el-tag type="info" size="small">{{xyz.norm().y|round3}}</el-tag>
+        <el-tag type="info" size="small">{{xyz.norm().z|round3}}</el-tag>
       </p>
     </div>
   </div>
@@ -46,6 +52,7 @@ export default class ColorBlock extends Vue {
   @Prop() private color!: RGB | XYZ;
   private rgb = this.color instanceof RGB ? this.color : this.color.toRGB();
   private xyz = this.color instanceof XYZ ? this.color : this.color.toXYZ();
+  private XYz: XYZ = new XYZ(0, 0, 0);
   private get validRGB() {
     return RGB.isValid(this.rgb);
   }
@@ -64,7 +71,7 @@ export default class ColorBlock extends Vue {
   text-align: left;
 }
 .block {
-  min-width: 5em;
+  min-width: 7em;
   display: block;
   position: relative;
   padding-bottom: 100%;

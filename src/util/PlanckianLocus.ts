@@ -12,11 +12,11 @@ const M = (t: number) => (lambda: number) =>
 export function spectrumAtTemp(
   temp: number,
   start: number = 400,
-  end: number = 695,
+  end: number = 700,
   resolution: number = 5
 ): Spectrum {
   const plankianT = M(temp);
-  const lambdas = range(start, end, resolution);
+  const lambdas = range(start, end + resolution, resolution);
   const values = lambdas.map(item => plankianT(item * Math.pow(10, -9)));
   return Spectrum.makeFromValue(
     values,
