@@ -42,7 +42,11 @@ export default class SpecGraph extends Vue {
       xAxis: {
         type: "category",
         name: "nm",
-        data: range(newSpec.start, newSpec.end, newSpec.resolution)
+        data: range(
+          newSpec.start,
+          newSpec.end + newSpec.resolution,
+          newSpec.resolution
+        )
       },
       yAxis: {
         type: "value"

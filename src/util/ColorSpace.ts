@@ -102,9 +102,9 @@ export class Spectrum {
     const x = arrayMulti(spec, colorMatchX.data);
     const y = arrayMulti(spec, colorMatchY.data);
     const z = arrayMulti(spec, colorMatchZ.data);
-    const xSum = x.filter(item => item).reduce((a, b) => a + b, 0);
-    const ySum = y.filter(item => item).reduce((a, b) => a + b, 0);
-    const zSum = z.filter(item => item).reduce((a, b) => a + b, 0);
+    const xSum = x.reduce((a, b) => a + b, 0);
+    const ySum = y.reduce((a, b) => a + b, 0);
+    const zSum = z.reduce((a, b) => a + b, 0);
     return new XYZ(xSum, ySum, zSum);
   }
   public static makeFromValue(

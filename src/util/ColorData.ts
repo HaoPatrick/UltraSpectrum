@@ -8,8 +8,8 @@ import illC from "../assets/spec_lights/illC.json";
 
 const lights: { [name: string]: Spectrum } = {
   // tslint:disable:no-var-requires
-  d50: new Spectrum(d50 as ISpecValue),
   d65: new Spectrum(d65 as ISpecValue),
+  d50: new Spectrum(d50 as ISpecValue),
   illA: new Spectrum(illA as ISpecValue),
   illC: new Spectrum(illC as ISpecValue),
   illF: new Spectrum(illF as ISpecValue)

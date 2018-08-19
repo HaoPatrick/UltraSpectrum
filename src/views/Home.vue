@@ -44,8 +44,6 @@ export default class App extends Vue {
   protected selectComputed!: Spectrum;
   private lights: Spectrum[] = Object.values(colorData.lights);
   private reflectance: string[] = [];
-  private computedRGB = new RGB(0, 0, 0);
-  private computedXYZ = new XYZ(0, 0, 0);
   private elSelectLight: number = 0;
   private elSelectRef: number = 0;
   private loading: boolean = false;
@@ -68,8 +66,6 @@ export default class App extends Vue {
     );
     const result: Spectrum = Spectrum.makeFromValue(computedData, "computed");
     this.selectComputed = result;
-    this.computedXYZ = result.toXYZ().norm();
-    this.computedRGB = this.computedXYZ.toRGB();
   }
 
   private async created() {
