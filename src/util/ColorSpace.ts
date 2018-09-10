@@ -72,8 +72,8 @@ export class XYZ {
   /*
   * when converting to RGB, the xyz value should be normed.
   */
-  public toRGB(): RGB {
-    const xyz = this.norm();
+  public toRGB(norm: boolean = true): RGB {
+    const xyz = norm ? this.norm() : this;
     const r = 3.2406 * xyz.x - 1.5372 * xyz.y - 0.4986 * xyz.z;
     const g = -0.9689 * xyz.x + 1.8758 * xyz.y + 0.0415 * xyz.z;
     const b = 0.0557 * xyz.x - 0.204 * xyz.y + 1.057 * xyz.z;
@@ -88,6 +88,9 @@ export class XYZ {
   }
   public toNumbers(): [number, number, number] {
     return [this.x, this.y, this.z];
+  }
+  public scale(ratio: number): XYZ {
+    return new XYZ(this.x * ratio, this.y * ratio, this.z * ratio);
   }
 }
 
