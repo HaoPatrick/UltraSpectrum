@@ -2,7 +2,7 @@
   <div>
     <div>
       <span>Color Temperature: </span>
-      <el-input-number @change="computeDSeries" v-model="temp" :step="500" :min="4000" :max="25000"></el-input-number>
+      <el-input-number @change="computeDSeries" v-model="temp" :step="500" :min="1000" :max="25000"></el-input-number>
       <el-button @click="generateAll" style="margin-left:1em;">Generate All</el-button>
     </div>
     <DetailedGraph v-if="loading===false" :spectrum="spectrum"></DetailedGraph>
